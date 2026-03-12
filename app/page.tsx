@@ -13,9 +13,14 @@ import { DeveloperSection } from '@/components/sections/DeveloperSection'
 import { PricingSection } from '@/components/sections/PricingSection'
 import { CTASection } from '@/components/sections/CTASection'
 
-// Dynamic import for Brain scene (Three.js - client-only, no SSR)
+// Dynamic imports for Three.js components (client-only, no SSR)
 const BrainScene = dynamic(
   () => import('@/components/brain/BrainScene').then(mod => ({ default: mod.BrainScene })),
+  { ssr: false }
+)
+
+const BrainStickySection = dynamic(
+  () => import('@/components/brain/BrainStickySection').then(mod => ({ default: mod.BrainStickySection })),
   { ssr: false }
 )
 
@@ -36,8 +41,8 @@ export default function Home() {
         {/* Hero with inline brain canvas */}
         <div className="relative">
           <HeroSection />
-          {/* Brain canvas overlaid in the hero right column */}
-          <div className="absolute top-0 right-0 w-full lg:w-[58%] h-full pointer-events-none z-0">
+          {/* Brain canvas overlaid in the hero right column — hidden on mobile */}
+          <div className="hidden lg:block absolute top-0 right-0 w-[58%] h-full pointer-events-none z-0">
             <BrainScene />
           </div>
         </div>
@@ -45,6 +50,10 @@ export default function Home() {
         <ProblemSection />
         <SolutionSection />
         <ArchitectureSection />
+
+        {/* Sticky brain scroll-lock section — desktop: sticky 3D brain with scroll panels, mobile: stacked cards */}
+        <BrainStickySection />
+
         <MechanismsSection />
         <ComparisonSection />
         <ProofSection />
