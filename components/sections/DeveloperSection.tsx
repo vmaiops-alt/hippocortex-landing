@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { Button } from '@/components/ui/Button'
+import { ScrollReveal } from '@/components/motion/ScrollReveal'
 
 const tabs = [
   {
@@ -96,7 +97,7 @@ export function DeveloperSection() {
   const [installCopied, setInstallCopied] = useState(false)
   const [codeCopied, setCodeCopied] = useState(false)
 
-  const activeTabData = tabs.find(t => t.id === activeTab)!
+  const activeTabData = tabs.find((t) => t.id === activeTab)!
 
   const handleCopyInstall = () => {
     navigator.clipboard.writeText('npm install @hippocortex/sdk')
@@ -117,7 +118,7 @@ export function DeveloperSection() {
       aria-labelledby="developer-heading"
     >
       <div className="max-w-[1200px] mx-auto px-4 md:px-6 py-16 md:py-20 lg:py-24">
-        <div className="text-center">
+        <ScrollReveal className="text-center">
           <span className="text-xs font-medium text-accent-cyan tracking-[0.12em] uppercase">
             INTEGRATION
           </span>
@@ -128,91 +129,97 @@ export function DeveloperSection() {
             Working Memory in 10 Minutes
           </h2>
           <p className="mt-4 text-[17px] max-md:text-base text-text-secondary max-w-[680px] mx-auto">
-            Install the SDK. Add three function calls. Your agent has persistent memory 
+            Install the SDK. Add three function calls. Your agent has persistent memory
             that learns from every session. Works with any framework — no rewrites required.
           </p>
-        </div>
+        </ScrollReveal>
 
-        <div className="mt-10 max-w-[1000px] mx-auto">
-          {/* Install command */}
-          <button
-            onClick={handleCopyInstall}
-            className="w-full text-left bg-bg-surface border border-border-subtle rounded-[10px] px-5 py-3.5 font-mono text-[15px] cursor-pointer hover:border-border-medium transition-colors group relative"
-            aria-label="Copy install command"
-          >
-            <span className="text-accent-cyan">$ </span>
-            <span className="text-text-primary">npm install @hippocortex/sdk</span>
-            <span className="absolute right-4 top-1/2 -translate-y-1/2 text-text-muted group-hover:text-accent-cyan transition-colors text-sm">
-              {installCopied ? '✓ Copied' : '⎘'}
-            </span>
-          </button>
+        <ScrollReveal delay={200}>
+          <div className="mt-10 max-w-[1000px] mx-auto">
+            {/* Install command */}
+            <button
+              onClick={handleCopyInstall}
+              className="w-full text-left bg-bg-surface border border-border-subtle rounded-[10px] px-5 py-3.5 font-mono text-[15px] cursor-pointer hover:border-border-medium transition-colors group relative"
+              aria-label="Copy install command"
+            >
+              <span className="text-accent-cyan">$ </span>
+              <span className="text-text-primary">npm install @hippocortex/sdk</span>
+              <span className="absolute right-4 top-1/2 -translate-y-1/2 text-text-muted group-hover:text-accent-cyan transition-colors text-sm">
+                {installCopied ? '✓ Copied' : '⎘'}
+              </span>
+            </button>
 
-          {/* Code block with tabs */}
-          <div className="mt-8 border border-border-subtle rounded-xl overflow-hidden">
-            {/* Tab bar */}
-            <div className="flex border-b border-border-subtle" role="tablist">
-              {tabs.map((tab) => (
+            {/* Code block with tabs */}
+            <div className="mt-8 border border-border-subtle rounded-xl overflow-hidden">
+              {/* Tab bar */}
+              <div className="flex border-b border-border-subtle" role="tablist">
+                {tabs.map((tab) => (
+                  <button
+                    key={tab.id}
+                    role="tab"
+                    aria-selected={activeTab === tab.id}
+                    className={`px-4 py-3 text-sm font-medium transition-colors border-b-2 cursor-pointer ${
+                      activeTab === tab.id
+                        ? 'text-text-primary border-accent-cyan'
+                        : 'text-text-muted border-transparent hover:text-text-secondary'
+                    }`}
+                    onClick={() => setActiveTab(tab.id)}
+                  >
+                    <span className="hidden sm:inline">{tab.label}</span>
+                    <span className="sm:hidden">{tab.shortLabel}</span>
+                  </button>
+                ))}
+              </div>
+
+              {/* File header */}
+              <div className="flex items-center justify-between bg-bg-raised px-6 py-2.5 border-b border-border-subtle">
+                <span className="text-xs font-mono text-text-muted">
+                  {activeTabData.filename}
+                </span>
                 <button
-                  key={tab.id}
-                  role="tab"
-                  aria-selected={activeTab === tab.id}
-                  className={`px-4 py-3 text-sm font-medium transition-colors border-b-2 cursor-pointer ${
-                    activeTab === tab.id
-                      ? 'text-text-primary border-accent-cyan'
-                      : 'text-text-muted border-transparent hover:text-text-secondary'
+                  onClick={handleCopyCode}
+                  className={`text-xs transition-colors cursor-pointer ${
+                    codeCopied
+                      ? 'text-accent-cyan'
+                      : 'text-text-muted hover:text-text-secondary'
                   }`}
-                  onClick={() => setActiveTab(tab.id)}
+                  aria-label="Copy code"
                 >
-                  <span className="hidden sm:inline">{tab.label}</span>
-                  <span className="sm:hidden">{tab.shortLabel}</span>
+                  {codeCopied ? '✓' : '⎘'}
                 </button>
+              </div>
+
+              {/* Code content */}
+              <div className="bg-bg-surface p-6 overflow-x-auto" role="tabpanel">
+                <pre className="text-[14px] md:text-[15px] font-mono text-text-secondary leading-[1.65]">
+                  <code>{activeTabData.code}</code>
+                </pre>
+              </div>
+            </div>
+
+            {/* Framework badges */}
+            <div className="mt-8 flex flex-wrap justify-center gap-2">
+              {frameworkBadges.map((badge) => (
+                <span
+                  key={badge}
+                  className="px-3 py-1.5 text-xs font-medium text-text-tertiary bg-bg-overlay border border-border-medium rounded-full hover:border-border-strong hover:text-text-secondary hover:shadow-[0_0_12px_rgba(0,229,204,0.06)] transition-all"
+                >
+                  {badge}
+                </span>
               ))}
             </div>
-
-            {/* File header */}
-            <div className="flex items-center justify-between bg-bg-raised px-6 py-2.5 border-b border-border-subtle">
-              <span className="text-xs font-mono text-text-muted">{activeTabData.filename}</span>
-              <button
-                onClick={handleCopyCode}
-                className={`text-xs transition-colors cursor-pointer ${
-                  codeCopied ? 'text-accent-cyan' : 'text-text-muted hover:text-text-secondary'
-                }`}
-                aria-label="Copy code"
-              >
-                {codeCopied ? '✓' : '⎘'}
-              </button>
-            </div>
-
-            {/* Code content */}
-            <div className="bg-bg-surface p-6 overflow-x-auto" role="tabpanel">
-              <pre className="text-[14px] md:text-[15px] font-mono text-text-secondary leading-[1.65]">
-                <code>{activeTabData.code}</code>
-              </pre>
-            </div>
           </div>
-
-          {/* Framework badges */}
-          <div className="mt-8 flex flex-wrap justify-center gap-2">
-            {frameworkBadges.map((badge) => (
-              <span
-                key={badge}
-                className="px-3 py-1.5 text-xs font-medium text-text-tertiary bg-bg-overlay border border-border-medium rounded-full hover:border-border-strong hover:text-text-secondary hover:shadow-[0_0_12px_rgba(0,229,204,0.06)] transition-all"
-              >
-                {badge}
-              </span>
-            ))}
-          </div>
-        </div>
+        </ScrollReveal>
 
         {/* CTAs */}
-        <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
+        <ScrollReveal delay={300} className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
           <Button href="#start" variant="primary">
             Get Started — Free
           </Button>
           <Button href="https://docs.hippocortex.dev/api" variant="text" external>
             Full SDK Reference →
           </Button>
-        </div>
+        </ScrollReveal>
       </div>
     </section>
   )

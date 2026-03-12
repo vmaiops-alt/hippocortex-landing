@@ -1,11 +1,22 @@
 'use client'
 
-import { useRef, useState } from 'react'
+import { useRef, useState, useEffect } from 'react'
 import { Button } from '@/components/ui/Button'
 
 export function HeroSection() {
   const [copied, setCopied] = useState(false)
+  const [loaded, setLoaded] = useState(false)
   const sectionRef = useRef<HTMLElement>(null)
+
+  useEffect(() => {
+    // Check reduced motion
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      setLoaded(true)
+      return
+    }
+    // Small delay to ensure paint has happened
+    requestAnimationFrame(() => setLoaded(true))
+  }, [])
 
   const handleCopy = () => {
     navigator.clipboard.writeText('npm install @hippocortex/sdk')
@@ -24,7 +35,8 @@ export function HeroSection() {
       <div
         className="absolute inset-0 pointer-events-none"
         style={{
-          background: 'radial-gradient(ellipse at 60% 50%, rgba(0,229,204,0.08) 0%, rgba(139,92,246,0.04) 40%, transparent 70%)',
+          background:
+            'radial-gradient(ellipse at 60% 50%, rgba(0,229,204,0.08) 0%, rgba(139,92,246,0.04) 40%, transparent 70%)',
         }}
       />
 
@@ -32,21 +44,42 @@ export function HeroSection() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
           {/* Text content — left 5 cols */}
           <div className="lg:col-span-5 pt-16 md:pt-0">
+            {/* Headline — staggered entrance */}
             <h1
               id="hero-heading"
               className="text-[32px] md:text-[44px] lg:text-[56px] font-bold text-text-primary leading-[1.08] tracking-[-0.025em] max-w-[560px]"
+              style={{
+                opacity: loaded ? 1 : 0,
+                transform: loaded ? 'translateY(0)' : 'translateY(30px)',
+                transition: 'opacity 800ms cubic-bezier(0.08, 0.82, 0.17, 1), transform 800ms cubic-bezier(0.08, 0.82, 0.17, 1)',
+              }}
             >
               AI Agents That Learn From Experience
             </h1>
 
-            <p className="mt-6 text-base md:text-[17px] text-text-secondary leading-relaxed max-w-[560px]">
-              Hippocortex is a deterministic memory layer that captures what your agents do, 
-              compiles patterns into reusable knowledge, and synthesizes context within token 
+            {/* Subheadline */}
+            <p
+              className="mt-6 text-base md:text-[17px] text-text-secondary leading-relaxed max-w-[560px]"
+              style={{
+                opacity: loaded ? 1 : 0,
+                transform: loaded ? 'translateY(0)' : 'translateY(20px)',
+                transition: 'opacity 700ms cubic-bezier(0.16, 1, 0.3, 1) 150ms, transform 700ms cubic-bezier(0.16, 1, 0.3, 1) 150ms',
+              }}
+            >
+              Hippocortex is a deterministic memory layer that captures what your agents do,
+              compiles patterns into reusable knowledge, and synthesizes context within token
               budgets. Three API calls. Zero LLM dependencies. Full provenance on every fact.
             </p>
 
             {/* Install command */}
-            <div className="mt-8 relative">
+            <div
+              className="mt-8 relative"
+              style={{
+                opacity: loaded ? 1 : 0,
+                transform: loaded ? 'translateY(0)' : 'translateY(16px)',
+                transition: 'opacity 600ms cubic-bezier(0.16, 1, 0.3, 1) 350ms, transform 600ms cubic-bezier(0.16, 1, 0.3, 1) 350ms',
+              }}
+            >
               <button
                 onClick={handleCopy}
                 className="w-full text-left bg-bg-surface border border-border-subtle rounded-[10px] px-5 py-3.5 font-mono text-[15px] cursor-pointer hover:border-border-medium transition-colors group"
@@ -66,7 +99,14 @@ export function HeroSection() {
             </div>
 
             {/* CTAs */}
-            <div className="mt-8 flex flex-col sm:flex-row gap-3 sm:gap-4">
+            <div
+              className="mt-8 flex flex-col sm:flex-row gap-3 sm:gap-4"
+              style={{
+                opacity: loaded ? 1 : 0,
+                transform: loaded ? 'translateY(0)' : 'translateY(12px)',
+                transition: 'opacity 500ms cubic-bezier(0.16, 1, 0.3, 1) 500ms, transform 500ms cubic-bezier(0.16, 1, 0.3, 1) 500ms',
+              }}
+            >
               <Button href="#start" variant="primary">
                 Get Started — Free
               </Button>
@@ -78,7 +118,6 @@ export function HeroSection() {
 
           {/* Brain canvas — right 7 cols */}
           <div className="lg:col-span-7 relative h-[400px] md:h-[500px] lg:h-[600px]">
-            {/* Brain scene will be mounted here via BrainSection */}
             <div id="hero-brain-mount" className="w-full h-full" />
           </div>
         </div>

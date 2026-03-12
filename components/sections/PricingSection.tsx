@@ -1,6 +1,7 @@
 'use client'
 
 import { Button } from '@/components/ui/Button'
+import { ScrollReveal } from '@/components/motion/ScrollReveal'
 
 interface PricingTier {
   name: string
@@ -93,7 +94,7 @@ export function PricingSection() {
       aria-labelledby="pricing-heading"
     >
       <div className="max-w-[1200px] mx-auto px-4 md:px-6 py-16 md:py-20 lg:py-24">
-        <div className="text-center">
+        <ScrollReveal className="text-center">
           <h2
             id="pricing-heading"
             className="text-[28px] md:text-[36px] lg:text-[44px] font-semibold text-text-primary"
@@ -101,38 +102,43 @@ export function PricingSection() {
             Start Free. Scale When Ready.
           </h2>
           <p className="mt-4 text-[17px] max-md:text-base text-text-secondary max-w-[680px] mx-auto">
-            No credit card required. Free tier is real — not a 7-day trial. 
+            No credit card required. Free tier is real — not a 7-day trial.
             Upgrade when your agents need more memory.
           </p>
-        </div>
+        </ScrollReveal>
 
-        {/* Pricing cards — mobile shows Developer first */}
-        <div className="mt-8 md:mt-10 lg:mt-12">
-          {/* Desktop: 4 column grid */}
-          <div className="hidden lg:grid grid-cols-4 gap-6">
-            {tiers.map((tier) => (
-              <PricingCard key={tier.name} tier={tier} />
-            ))}
+        {/* Pricing cards — all appear simultaneously per spec */}
+        <ScrollReveal delay={200}>
+          <div className="mt-8 md:mt-10 lg:mt-12">
+            {/* Desktop: 4 column grid */}
+            <div className="hidden lg:grid grid-cols-4 gap-6">
+              {tiers.map((tier) => (
+                <PricingCard key={tier.name} tier={tier} />
+              ))}
+            </div>
+
+            {/* Tablet: 2x2 grid */}
+            <div className="hidden md:grid lg:hidden grid-cols-2 gap-5">
+              {tiers.map((tier) => (
+                <PricingCard key={tier.name} tier={tier} />
+              ))}
+            </div>
+
+            {/* Mobile: stacked, Developer first */}
+            <div className="md:hidden flex flex-col gap-4">
+              {[tiers[1], tiers[0], tiers[2], tiers[3]].map((tier) => (
+                <PricingCard key={tier.name} tier={tier} />
+              ))}
+            </div>
           </div>
+        </ScrollReveal>
 
-          {/* Tablet: 2x2 grid */}
-          <div className="hidden md:grid lg:hidden grid-cols-2 gap-5">
-            {tiers.map((tier) => (
-              <PricingCard key={tier.name} tier={tier} />
-            ))}
-          </div>
-
-          {/* Mobile: stacked, Developer first */}
-          <div className="md:hidden flex flex-col gap-4">
-            {[tiers[1], tiers[0], tiers[2], tiers[3]].map((tier) => (
-              <PricingCard key={tier.name} tier={tier} />
-            ))}
-          </div>
-        </div>
-
-        <p className="mt-8 text-sm text-text-muted text-center">
-          Events = capture() calls. learn() and synthesize() included at every tier. No hidden fees.
-        </p>
+        <ScrollReveal delay={300}>
+          <p className="mt-8 text-sm text-text-muted text-center">
+            Events = capture() calls. learn() and synthesize() included at every tier. No
+            hidden fees.
+          </p>
+        </ScrollReveal>
       </div>
 
       {/* Neural line divider */}
@@ -176,7 +182,16 @@ function PricingCard({ tier }: { tier: PricingTier }) {
       <ul className="mt-6 flex-1 space-y-3">
         {tier.features.map((feature) => (
           <li key={feature} className="flex items-start gap-2 text-sm text-text-secondary">
-            <svg className="w-4 h-4 text-accent-cyan shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+            <svg
+              className="w-4 h-4 text-accent-cyan shrink-0 mt-0.5"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth={2}
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              aria-hidden="true"
+            >
               <path d="M20 6L9 17l-5-5" />
             </svg>
             {feature}
@@ -185,11 +200,7 @@ function PricingCard({ tier }: { tier: PricingTier }) {
       </ul>
 
       <div className="mt-8">
-        <Button
-          href="#start"
-          variant={tier.ctaVariant}
-          className="w-full justify-center"
-        >
+        <Button href="#start" variant={tier.ctaVariant} className="w-full justify-center">
           {tier.cta}
         </Button>
       </div>

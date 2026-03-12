@@ -64,6 +64,9 @@ const STATE_REGION_MAP: Record<BrainState, number[]> = {
   DORMANT: [],
 }
 
+// Synthesizer center position for compression convergence
+const SYNTH_CENTER = new THREE.Vector3(0, 0.5, 0)
+
 export function SynapseNodes() {
   const meshRef = useRef<THREE.InstancedMesh>(null)
   const { positions, regionIds } = useMemo(() => generateNodes(), [])
@@ -75,10 +78,18 @@ export function SynapseNodes() {
   const burstTimerRef = useRef(0)
   const burstRng = useRef(seededRandom(99))
 
+  // ── Compression sequence tracking ──
+  const synthStartRef = useRef(0)
+  const prevStateRef = useRef<BrainState>('IDLE')
+  // Store original positions for compression lerp
+  const originalPositions = useRef(new Float32Array(positions))
+
   // Track brain state via ref — with proper cleanup
   const stateRef = useRef<BrainState>('IDLE')
   useEffect(() => {
-    const unsubscribe = useBrainStore.subscribe((s) => { stateRef.current = s.state })
+    const unsubscribe = useBrainStore.subscribe((s) => {
+      stateRef.current = s.state
+    })
     return unsubscribe
   }, [])
 
@@ -87,7 +98,9 @@ export function SynapseNodes() {
   useEffect(() => {
     const mq = window.matchMedia('(prefers-reduced-motion: reduce)')
     reducedMotion.current = mq.matches
-    const handler = (e: MediaQueryListEvent) => { reducedMotion.current = e.matches }
+    const handler = (e: MediaQueryListEvent) => {
+      reducedMotion.current = e.matches
+    }
     mq.addEventListener('change', handler)
     return () => mq.removeEventListener('change', handler)
   }, [])
@@ -111,40 +124,126 @@ export function SynapseNodes() {
     const activeRegions = STATE_REGION_MAP[state]
     burstTimerRef.current += delta
 
-    for (let i = 0; i < NODE_COUNT; i++) {
-      const x = positions[i * 3]
-      const y = positions[i * 3 + 1]
-      const z = positions[i * 3 + 2]
+    // ── Compression sequence detection ──
+    if (state === 'SYNTHESIS' && prevStateRef.current !== 'SYNTHESIS') {
+      synthStartRef.current = performance.now()
+    }
+    if (state !== 'SYNTHESIS') {
+      synthStartRef.current = 0
+    }
+    prevStateRef.current = state
 
-      dummy.position.set(x, y, z)
+    const isSynthesis = state === 'SYNTHESIS' && synthStartRef.current > 0
+    const synthElapsed = isSynthesis
+      ? (performance.now() - synthStartRef.current) / 1000
+      : 0
+
+    for (let i = 0; i < NODE_COUNT; i++) {
+      const origX = originalPositions.current[i * 3]
+      const origY = originalPositions.current[i * 3 + 1]
+      const origZ = originalPositions.current[i * 3 + 2]
+
+      let x = origX
+      let y = origY
+      let z = origZ
 
       const isActive = activeRegions.includes(regionIds[i])
+      const isSynthRegion = regionIds[i] === 5 // synthesizer region
 
       let targetOpacity: number
-      if (state === 'IDLE' || state === 'DORMANT') {
-        targetOpacity = 0.3
-      } else if (isActive) {
-        targetOpacity = 0.8
-      } else {
-        targetOpacity = 0.15
-      }
+      let extraScale = 1.0
 
-      // Idle burst effect (using seeded rng, not Math.random)
-      if (state === 'IDLE' && burstTimerRef.current > 3.5) {
-        if (burstRng.current() < 0.03) {
-          targetOpacity = 1.0
+      if (isSynthesis) {
+        // ── COMPRESSION SEQUENCE ──
+        if (synthElapsed < 2.0) {
+          // Phase 1: Signal activity rise — synthesizer brightens, others dim
+          const ramp = Math.min(synthElapsed / 2.0, 1.0)
+          if (isSynthRegion) {
+            targetOpacity = 0.3 + ramp * 0.7
+          } else {
+            targetOpacity = 0.3 - ramp * 0.25
+          }
+        } else if (synthElapsed < 2.5) {
+          // Phase 2: Node dimming — all except synthesizer cluster fade
+          const dimProgress = (synthElapsed - 2.0) / 0.5
+          if (isSynthRegion) {
+            targetOpacity = 1.0
+          } else {
+            targetOpacity = Math.max(0.05, 0.05 + (1.0 - dimProgress) * 0.0)
+          }
+        } else if (synthElapsed < 3.3) {
+          // Phase 3: Compression snap — synthesizer nodes converge to center
+          const snapProgress = Math.min((synthElapsed - 2.5) / 0.8, 1.0)
+          // Dramatic easing: fast start, sharp decel
+          const eased = 1.0 - Math.pow(1.0 - snapProgress, 3)
+
+          if (isSynthRegion) {
+            // Lerp position toward SYNTH_CENTER
+            x = origX + (SYNTH_CENTER.x - origX) * eased
+            y = origY + (SYNTH_CENTER.y - origY) * eased
+            z = origZ + (SYNTH_CENTER.z - origZ) * eased
+
+            // Intensify as they converge
+            targetOpacity = 1.0
+            extraScale = 1.0 + snapProgress * 1.5 // grow brighter/bigger
+          } else {
+            targetOpacity = 0.02
+          }
+        } else if (synthElapsed < 3.9) {
+          // Phase 4: Single bright point + radial ping
+          if (isSynthRegion) {
+            x = SYNTH_CENTER.x
+            y = SYNTH_CENTER.y
+            z = SYNTH_CENTER.z
+            targetOpacity = 1.0
+            extraScale = 2.0
+          } else {
+            targetOpacity = 0.02
+          }
+        } else {
+          // Phase 5: Hold — single modest glow
+          if (isSynthRegion) {
+            // Ease back from peak
+            const holdProgress = Math.min((synthElapsed - 3.9) / 0.4, 1.0)
+            x = SYNTH_CENTER.x + (origX - SYNTH_CENTER.x) * holdProgress * 0.3
+            y = SYNTH_CENTER.y + (origY - SYNTH_CENTER.y) * holdProgress * 0.3
+            z = SYNTH_CENTER.z + (origZ - SYNTH_CENTER.z) * holdProgress * 0.3
+            targetOpacity = 1.0 - holdProgress * 0.2
+            extraScale = 2.0 - holdProgress * 1.0
+          } else {
+            targetOpacity = 0.05
+          }
+        }
+      } else {
+        // ── NORMAL STATE BEHAVIOR (unchanged) ──
+        if (state === 'IDLE' || state === 'DORMANT') {
+          targetOpacity = 0.3
+        } else if (isActive) {
+          targetOpacity = 0.8
+        } else {
+          targetOpacity = 0.15
+        }
+
+        // Idle burst effect
+        if (state === 'IDLE' && burstTimerRef.current > 3.5) {
+          if (burstRng.current() < 0.03) {
+            targetOpacity = 1.0
+          }
         }
       }
 
-      // Skip animation if reduced motion (snap to target)
+      // Skip animation if reduced motion
       if (reducedMotion.current) {
         opacitiesRef.current[i] = targetOpacity
       } else {
-        opacitiesRef.current[i] += (targetOpacity - opacitiesRef.current[i]) * delta * 3
+        const lerpSpeed = isSynthesis ? 5 : 3
+        opacitiesRef.current[i] +=
+          (targetOpacity - opacitiesRef.current[i]) * delta * lerpSpeed
       }
 
-      const scale = 0.012 + opacitiesRef.current[i] * 0.008
-      dummy.scale.setScalar(scale)
+      dummy.position.set(x, y, z)
+      const baseScale = 0.012 + opacitiesRef.current[i] * 0.008
+      dummy.scale.setScalar(baseScale * extraScale)
       dummy.updateMatrix()
       mesh.setMatrixAt(i, dummy.matrix)
 

@@ -1,10 +1,24 @@
 'use client'
 
-const metrics = [
-  { number: '4,587', label: 'tests passing', context: '0 failures' },
-  { number: '60%+', label: 'context compression', context: 'vs. raw retrieval' },
-  { number: '0', label: 'internal LLM calls', context: 'fully deterministic' },
-  { number: '< 100ms', label: 'capture latency', context: 'p99' },
+import { ScrollReveal, StaggerReveal } from '@/components/motion/ScrollReveal'
+import { CountUp } from '@/components/motion/CountUp'
+
+interface Metric {
+  end: number
+  prefix?: string
+  suffix?: string
+  label: string
+  context: string
+  separator?: boolean
+  noCount?: boolean
+  displayValue?: string
+}
+
+const metrics: Metric[] = [
+  { end: 4587, label: 'tests passing', context: '0 failures', separator: true },
+  { end: 60, suffix: '%+', label: 'context compression', context: 'vs. raw retrieval' },
+  { end: 0, label: 'internal LLM calls', context: 'fully deterministic', noCount: true, displayValue: '0' },
+  { end: 100, prefix: '< ', suffix: 'ms', label: 'capture latency', context: 'p99', separator: false },
 ]
 
 const badges = [
@@ -22,7 +36,8 @@ export function ProofSection() {
       aria-labelledby="performance-heading"
     >
       <div className="max-w-[1200px] mx-auto px-4 md:px-6 py-16 md:py-20 lg:py-24">
-        <div className="text-center">
+        {/* Header */}
+        <ScrollReveal className="text-center">
           <span className="text-xs font-medium text-text-tertiary tracking-[0.12em] uppercase">
             THE NUMBERS
           </span>
@@ -32,18 +47,32 @@ export function ProofSection() {
           >
             Tested. Measured. Shipped.
           </h2>
-        </div>
+        </ScrollReveal>
 
-        {/* Metrics */}
-        <div className="mt-8 md:mt-10 lg:mt-12 grid grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-0">
+        {/* Metrics with count-up */}
+        <StaggerReveal
+          className="mt-8 md:mt-10 lg:mt-12 grid grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-0"
+          stagger={150}
+        >
           {metrics.map((metric) => (
             <div key={metric.label} className="text-center">
-              <div
-                className="text-[48px] md:text-[64px] lg:text-[96px] font-mono font-medium text-text-primary leading-none"
-                style={{ fontFeatureSettings: '"tnum"' }}
-                data-value={metric.number}
-              >
-                {metric.number}
+              <div className="text-[48px] md:text-[64px] lg:text-[96px] font-mono font-medium text-text-primary leading-none">
+                {metric.noCount ? (
+                  <span
+                    style={{ fontFeatureSettings: '"tnum"' }}
+                    data-value={metric.displayValue}
+                  >
+                    {metric.displayValue}
+                  </span>
+                ) : (
+                  <CountUp
+                    end={metric.end}
+                    prefix={metric.prefix}
+                    suffix={metric.suffix}
+                    duration={1500}
+                    separator={metric.separator}
+                  />
+                )}
               </div>
               <div className="mt-2 text-sm font-medium text-text-tertiary">
                 {metric.label}
@@ -53,26 +82,33 @@ export function ProofSection() {
               </div>
             </div>
           ))}
-        </div>
+        </StaggerReveal>
 
         {/* Badges */}
-        <div className="mt-10 flex flex-wrap justify-center gap-2 md:gap-3">
-          {badges.map((badge) => (
-            <span
-              key={badge}
-              className="px-3 py-1.5 text-xs font-medium text-text-tertiary bg-bg-overlay border border-border-medium rounded-full"
-            >
-              {badge}
-            </span>
-          ))}
-        </div>
+        <ScrollReveal delay={300}>
+          <div className="mt-10 flex flex-wrap justify-center gap-2 md:gap-3">
+            {badges.map((badge, i) => (
+              <span
+                key={badge}
+                className="px-3 py-1.5 text-xs font-medium text-text-tertiary bg-bg-overlay border border-border-medium rounded-full"
+                style={{
+                  animationDelay: `${i * 60}ms`,
+                }}
+              >
+                {badge}
+              </span>
+            ))}
+          </div>
+        </ScrollReveal>
 
         {/* Credibility copy */}
-        <p className="mt-8 text-sm text-text-tertiary text-center max-w-[680px] mx-auto">
-          Built across 100 engineering tasks over 10 development phases. Every layer 
-          independently tested. Every API frozen before release. This isn&apos;t a prototype 
-          with a landing page — it&apos;s infrastructure that shipped.
-        </p>
+        <ScrollReveal delay={200}>
+          <p className="mt-8 text-sm text-text-tertiary text-center max-w-[680px] mx-auto">
+            Built across 100 engineering tasks over 10 development phases. Every layer
+            independently tested. Every API frozen before release. This isn&apos;t a prototype
+            with a landing page — it&apos;s infrastructure that shipped.
+          </p>
+        </ScrollReveal>
       </div>
     </section>
   )

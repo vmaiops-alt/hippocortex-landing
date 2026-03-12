@@ -2,6 +2,7 @@
 
 import { Card } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
+import { ScrollReveal, StaggerReveal } from '@/components/motion/ScrollReveal'
 
 const mechanisms = [
   {
@@ -14,7 +15,8 @@ const mechanisms = [
       </svg>
     ),
     title: 'Memories That Self-Correct',
-    description: 'New evidence conflicts with existing knowledge? Hippocortex detects the contradiction, quarantines the conflicting entries, and resolves based on recency, frequency, and provenance strength. Your agent never operates on stale facts — it knows which version of the truth to trust.',
+    description:
+      'New evidence conflicts with existing knowledge? Hippocortex detects the contradiction, quarantines the conflicting entries, and resolves based on recency, frequency, and provenance strength. Your agent never operates on stale facts — it knows which version of the truth to trust.',
     accentColor: '#F43F5E',
   },
   {
@@ -28,7 +30,8 @@ const mechanisms = [
       </svg>
     ),
     title: 'Every Fact Has Receipts',
-    description: 'Every semantic fact, every graph relationship, every compiled playbook — traceable to the original episodic evidence that created it. Not just timestamps. Structural provenance across all six layers. Audit any piece of knowledge back to the interaction that produced it.',
+    description:
+      'Every semantic fact, every graph relationship, every compiled playbook — traceable to the original episodic evidence that created it. Not just timestamps. Structural provenance across all six layers. Audit any piece of knowledge back to the interaction that produced it.',
     accentColor: '#06B6D4',
   },
   {
@@ -40,7 +43,8 @@ const mechanisms = [
       </svg>
     ),
     title: 'Episodes Become Expertise',
-    description: 'Raw episodes alone aren\'t useful at scale. The Memory Compiler promotes patterns into reusable knowledge artifacts: task schemas from repeated procedures, failure playbooks from error patterns, causal chains from outcomes, decision policies from preferences. Your agent doesn\'t just remember — it develops expertise.',
+    description:
+      "Raw episodes alone aren't useful at scale. The Memory Compiler promotes patterns into reusable knowledge artifacts: task schemas from repeated procedures, failure playbooks from error patterns, causal chains from outcomes, decision policies from preferences. Your agent doesn't just remember — it develops expertise.",
     accentColor: '#8B5CF6',
   },
   {
@@ -54,7 +58,8 @@ const mechanisms = [
       </svg>
     ),
     title: 'Same Inputs. Same Outputs. Every Time.',
-    description: 'Zero LLM calls internally. Every operation — salience scoring, dedup, pattern mining, contradiction detection, context synthesis — runs on deterministic algorithms. Verifiable. Testable. Reproducible. No probabilistic surprises in your memory layer.',
+    description:
+      'Zero LLM calls internally. Every operation — salience scoring, dedup, pattern mining, contradiction detection, context synthesis — runs on deterministic algorithms. Verifiable. Testable. Reproducible. No probabilistic surprises in your memory layer.',
     accentColor: '#00E5CC',
   },
 ]
@@ -67,7 +72,7 @@ export function MechanismsSection() {
       aria-labelledby="mechanisms-heading"
     >
       <div className="max-w-[1200px] mx-auto px-4 md:px-6 py-16 md:py-20 lg:py-24">
-        <div className="text-center">
+        <ScrollReveal className="text-center">
           <span className="text-xs font-medium text-text-tertiary tracking-[0.12em] uppercase">
             UNDER THE HOOD
           </span>
@@ -77,9 +82,13 @@ export function MechanismsSection() {
           >
             Architectural Properties, Not Feature Checkboxes
           </h2>
-        </div>
+        </ScrollReveal>
 
-        <div className="mt-8 md:mt-10 lg:mt-12 grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-5 lg:gap-6">
+        <StaggerReveal
+          className="mt-8 md:mt-10 lg:mt-12 grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-5 lg:gap-6"
+          stagger={120}
+          scale={0.95}
+        >
           {mechanisms.map((mechanism) => (
             <Card
               key={mechanism.title}
@@ -97,13 +106,17 @@ export function MechanismsSection() {
               </p>
             </Card>
           ))}
-        </div>
+        </StaggerReveal>
 
-        <div className="mt-10 text-center">
-          <Button href="https://docs.hippocortex.dev/architecture" variant="text" external>
+        <ScrollReveal delay={200} className="mt-10 text-center">
+          <Button
+            href="https://docs.hippocortex.dev/architecture"
+            variant="text"
+            external
+          >
             Read the architecture guide →
           </Button>
-        </div>
+        </ScrollReveal>
       </div>
     </section>
   )

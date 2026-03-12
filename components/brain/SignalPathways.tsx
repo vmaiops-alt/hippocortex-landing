@@ -100,31 +100,41 @@ const STATE_ACTIVE_REGIONS: Record<BrainState, string[]> = {
 
 export function SignalPathways() {
   const pathways = useMemo(() => generatePathways(), [])
-  const curves = useMemo(() =>
-    pathways.map(p => new THREE.CatmullRomCurve3(p.points)),
+  const curves = useMemo(
+    () => pathways.map((p) => new THREE.CatmullRomCurve3(p.points)),
     [pathways]
   )
-  const tubeGeometries = useMemo(() =>
-    curves.map(curve => new THREE.TubeGeometry(curve, 32, 0.006, 6, false)),
+  const tubeGeometries = useMemo(
+    () => curves.map((curve) => new THREE.TubeGeometry(curve, 32, 0.006, 6, false)),
     [curves]
   )
 
-  // Pulse management via ref (no allocation per frame)
-  const pulsesRef = useRef<PulseState[]>([
-    { pathwayIdx: 0, progress: 0, speed: 0.8, active: false },
-    { pathwayIdx: 1, progress: 0, speed: 0.7, active: false },
-    { pathwayIdx: 2, progress: 0, speed: 0.9, active: false },
-  ])
+  // Expanded pulse pool: normally 3, up to 10 for synthesis convergence
+  const pulsesRef = useRef<PulseState[]>(
+    Array.from({ length: 10 }, () => ({
+      pathwayIdx: 0,
+      progress: 0,
+      speed: 0.8,
+      active: false,
+    }))
+  )
   const pulseTimerRef = useRef(0)
 
   // Track state via ref — with proper cleanup
   const stateRef = useRef<BrainState>('IDLE')
   useEffect(() => {
-    const unsubscribe = useBrainStore.subscribe((s) => { stateRef.current = s.state })
+    const unsubscribe = useBrainStore.subscribe((s) => {
+      stateRef.current = s.state
+    })
     return unsubscribe
   }, [])
 
-  // Seeded random for pulse selection (no Math.random in frame loop)
+  // ── Compression sequence tracking ──
+  const synthStartRef = useRef(0)
+  const prevStateRef = useRef<BrainState>('IDLE')
+  const convergenceFiredRef = useRef(false)
+
+  // Seeded random for pulse selection
   const pulseRng = useRef(seededRandom(137))
 
   // Prefers-reduced-motion
@@ -132,14 +142,16 @@ export function SignalPathways() {
   useEffect(() => {
     const mq = window.matchMedia('(prefers-reduced-motion: reduce)')
     reducedMotion.current = mq.matches
-    const handler = (e: MediaQueryListEvent) => { reducedMotion.current = e.matches }
+    const handler = (e: MediaQueryListEvent) => {
+      reducedMotion.current = e.matches
+    }
     mq.addEventListener('change', handler)
     return () => mq.removeEventListener('change', handler)
   }, [])
 
   // Materials for pathways — stable refs
   const materialsRef = useRef(
-    pathways.map(p => {
+    pathways.map((p) => {
       const mat = new THREE.MeshBasicMaterial({
         color: p.color,
         transparent: true,
@@ -152,9 +164,18 @@ export function SignalPathways() {
   // Cleanup materials on unmount
   useEffect(() => {
     return () => {
-      materialsRef.current.forEach(m => m.dispose())
+      materialsRef.current.forEach((m) => m.dispose())
     }
   }, [])
+
+  // Find pathways that converge toward synthesizer
+  const synthPathways = useMemo(
+    () =>
+      pathways
+        .map((p, i) => ({ ...p, idx: i }))
+        .filter((p) => p.to === 'synthesizer' || p.to === 'compiler'),
+    [pathways]
+  )
 
   useFrame((_, delta) => {
     if (reducedMotion.current) return
@@ -163,13 +184,66 @@ export function SignalPathways() {
     const activeRegions = STATE_ACTIVE_REGIONS[state]
     pulseTimerRef.current += delta
 
+    // ── Compression sequence detection ──
+    if (state === 'SYNTHESIS' && prevStateRef.current !== 'SYNTHESIS') {
+      synthStartRef.current = performance.now()
+      convergenceFiredRef.current = false
+    }
+    if (state !== 'SYNTHESIS') {
+      synthStartRef.current = 0
+      convergenceFiredRef.current = false
+    }
+    prevStateRef.current = state
+
+    const isSynthesis = state === 'SYNTHESIS' && synthStartRef.current > 0
+    const synthElapsed = isSynthesis
+      ? (performance.now() - synthStartRef.current) / 1000
+      : 0
+
+    // ── SYNTHESIS: Fire convergence pulses ──
+    if (isSynthesis && !convergenceFiredRef.current && synthElapsed > 0.1) {
+      convergenceFiredRef.current = true
+
+      // Fire 8-10 staggered pulses converging toward synthesizer
+      const pulses = pulsesRef.current
+      const convergePaths = [
+        ...synthPathways.map((p) => p.idx),
+        // Add some regular pathways for variety
+        ...pathways
+          .map((p, i) => ({ p, i }))
+          .filter((x) => x.p.from !== 'synthesizer')
+          .slice(0, 4)
+          .map((x) => x.i),
+      ].slice(0, 10)
+
+      convergePaths.forEach((pathIdx, i) => {
+        if (pulses[i]) {
+          pulses[i].pathwayIdx = pathIdx
+          pulses[i].progress = -(i * 0.05) // staggered start (100ms apart at ~0.8 speed)
+          pulses[i].speed = 1.3 // urgency
+          pulses[i].active = true
+        }
+      })
+    }
+
     // Update pathway opacities based on active state
     pathways.forEach((p, idx) => {
       const mat = materialsRef.current[idx]
-      const isRelevant = activeRegions.includes(p.from) || activeRegions.includes(p.to)
+      const isRelevant =
+        activeRegions.includes(p.from) || activeRegions.includes(p.to)
 
       let targetOpacity: number
-      if (state === 'IDLE' || state === 'DORMANT') {
+      if (isSynthesis) {
+        // During compression: pathways that lead to synthesizer brighten
+        const leadsToSynth = p.to === 'synthesizer' || p.to === 'compiler'
+        if (synthElapsed < 2.5) {
+          // Convergence phase: relevant pathways bright
+          targetOpacity = leadsToSynth ? 0.5 : 0.08
+        } else {
+          // Post-compression: everything dims
+          targetOpacity = 0.05
+        }
+      } else if (state === 'IDLE' || state === 'DORMANT') {
         targetOpacity = 0.15
       } else if (isRelevant) {
         targetOpacity = 0.4
@@ -180,45 +254,61 @@ export function SignalPathways() {
       mat.opacity += (targetOpacity - mat.opacity) * delta * 3
     })
 
-    // Manage pulses
+    // Manage pulses (normal mode)
     const pulses = pulsesRef.current
-    const idleInterval = state === 'IDLE' ? 5 : 2
 
-    if (pulseTimerRef.current > idleInterval) {
-      pulseTimerRef.current = 0
+    if (!isSynthesis) {
+      const maxActive = 3
+      const idleInterval = state === 'IDLE' ? 5 : 2
 
-      const inactivePulse = pulses.find(p => !p.active)
-      if (inactivePulse) {
-        let candidateIdx: number
-        if (state === 'IDLE' || state === 'DORMANT') {
-          candidateIdx = Math.floor(pulseRng.current() * pathways.length)
-        } else {
-          const relevant = pathways
-            .map((p, i) => ({ p, i }))
-            .filter(({ p }) => activeRegions.includes(p.from) || activeRegions.includes(p.to))
-          if (relevant.length > 0) {
-            candidateIdx = relevant[Math.floor(pulseRng.current() * relevant.length)].i
-          } else {
-            candidateIdx = Math.floor(pulseRng.current() * pathways.length)
+      if (pulseTimerRef.current > idleInterval) {
+        pulseTimerRef.current = 0
+
+        const activeCount = pulses.filter((p) => p.active).length
+        if (activeCount < maxActive) {
+          const inactivePulse = pulses.find((p) => !p.active)
+          if (inactivePulse) {
+            let candidateIdx: number
+            if (state === 'IDLE' || state === 'DORMANT') {
+              candidateIdx = Math.floor(pulseRng.current() * pathways.length)
+            } else {
+              const relevant = pathways
+                .map((p, i) => ({ p, i }))
+                .filter(
+                  ({ p }) =>
+                    activeRegions.includes(p.from) || activeRegions.includes(p.to)
+                )
+              if (relevant.length > 0) {
+                candidateIdx =
+                  relevant[Math.floor(pulseRng.current() * relevant.length)].i
+              } else {
+                candidateIdx = Math.floor(
+                  pulseRng.current() * pathways.length
+                )
+              }
+            }
+
+            inactivePulse.pathwayIdx = candidateIdx
+            inactivePulse.progress = 0
+            inactivePulse.speed = 0.6 + pulseRng.current() * 0.4
+            inactivePulse.active = true
           }
         }
-
-        inactivePulse.pathwayIdx = candidateIdx
-        inactivePulse.progress = 0
-        inactivePulse.speed = 0.6 + pulseRng.current() * 0.4
-        inactivePulse.active = true
       }
     }
 
     // Update active pulses
-    pulses.forEach(pulse => {
+    pulses.forEach((pulse) => {
       if (!pulse.active) return
 
       pulse.progress += delta * pulse.speed
 
       const mat = materialsRef.current[pulse.pathwayIdx]
-      const pulseEmissive = Math.max(0, 1.0 - Math.abs(pulse.progress - 0.5) * 4) * 0.6
-      mat.opacity = Math.max(mat.opacity, 0.15 + pulseEmissive)
+      if (pulse.progress >= 0) {
+        const pulseEmissive =
+          Math.max(0, 1.0 - Math.abs(pulse.progress - 0.5) * 4) * 0.6
+        mat.opacity = Math.max(mat.opacity, 0.15 + pulseEmissive)
+      }
 
       if (pulse.progress >= 1) {
         pulse.active = false
@@ -229,7 +319,11 @@ export function SignalPathways() {
   return (
     <group>
       {tubeGeometries.map((geo, idx) => (
-        <mesh key={pathways[idx].id} geometry={geo} material={materialsRef.current[idx]} />
+        <mesh
+          key={pathways[idx].id}
+          geometry={geo}
+          material={materialsRef.current[idx]}
+        />
       ))}
     </group>
   )
