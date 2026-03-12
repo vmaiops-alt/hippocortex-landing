@@ -66,12 +66,11 @@ body {
   margin: 0 auto;
   background: linear-gradient(90deg,
     transparent 0%,
-    rgba(0, 229, 204, 0.4) 20%,
-    rgba(139, 92, 246, 0.4) 50%,
-    rgba(0, 229, 204, 0.4) 80%,
+    rgba(0, 229, 204, 0.25) 20%,
+    rgba(139, 92, 246, 0.25) 50%,
+    rgba(0, 229, 204, 0.25) 80%,
     transparent 100%
   );
-  box-shadow: 0 0 8px rgba(0, 229, 204, 0.15);
 }
 
 /* Grid overlay pattern */
@@ -82,20 +81,20 @@ body {
   background-size: 40px 40px;
 }
 
-/* Glow keyframes */
+/* Glow keyframes — subtle, developer-clean aesthetic */
 @keyframes glow-pulse {
-  0%, 100% { opacity: 0.6; }
+  0%, 100% { opacity: 0.75; }
   50% { opacity: 1; }
 }
 
 @keyframes cta-glow {
-  0%, 100% { box-shadow: 0 0 40px rgba(0, 229, 204, 0.15); }
-  50% { box-shadow: 0 0 48px rgba(0, 229, 204, 0.25); }
+  0%, 100% { box-shadow: 0 0 24px rgba(0, 229, 204, 0.08); }
+  50% { box-shadow: 0 0 32px rgba(0, 229, 204, 0.14); }
 }
 
 @keyframes breathe {
-  0%, 100% { transform: scale(0.95); }
-  50% { transform: scale(1.05); }
+  0%, 100% { transform: scale(0.98); }
+  50% { transform: scale(1.02); }
 }
 
 @keyframes cursor-blink {

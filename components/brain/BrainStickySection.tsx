@@ -227,6 +227,7 @@ function MobileBrainSection() {
 // ── Main Sticky Section ────────────────────────────────────────────
 export function BrainStickySection() {
   const containerRef = useRef<HTMLDivElement>(null)
+  const triggerRef = useRef<ScrollTrigger | null>(null)
   const [isMobile, setIsMobile] = useState(false)
 
   useEffect(() => {
@@ -239,6 +240,17 @@ export function BrainStickySection() {
   useEffect(() => {
     if (isMobile || !containerRef.current) return
 
+    // Kill any existing trigger for this container (StrictMode safety)
+    if (triggerRef.current) {
+      triggerRef.current.kill()
+      triggerRef.current = null
+    }
+
+    // Also kill any stale orphaned ScrollTrigger instances targeting this element
+    ScrollTrigger.getAll()
+      .filter((t) => t.vars.trigger === containerRef.current)
+      .forEach((t) => t.kill())
+
     // Track scroll progress through the sticky section
     const trigger = ScrollTrigger.create({
       trigger: containerRef.current,
@@ -248,17 +260,27 @@ export function BrainStickySection() {
       onUpdate: (self) => {
         updateBrainState(self.progress)
       },
+      onEnter: () => {
+        useBrainStore.getState().setState('EPISODIC')
+      },
       onLeave: () => {
-        // Brain exits → go dormant
         useBrainStore.getState().setState('DORMANT')
       },
       onLeaveBack: () => {
-        // Scrolling back up above the section
         useBrainStore.getState().setState('IDLE')
       },
     })
 
-    return () => trigger.kill()
+    triggerRef.current = trigger
+
+    // Force a refresh after layout settles
+    const refreshTimer = setTimeout(() => ScrollTrigger.refresh(), 100)
+
+    return () => {
+      clearTimeout(refreshTimer)
+      trigger.kill()
+      triggerRef.current = null
+    }
   }, [isMobile])
 
   if (isMobile) {
@@ -266,9 +288,9 @@ export function BrainStickySection() {
   }
 
   return (
-    <div ref={containerRef} className="relative" style={{ minHeight: '300vh' }}>
-      {/* Sticky brain canvas — fills viewport, sticks to top */}
-      <div className="sticky top-0 h-screen w-full z-0 bg-bg-base">
+    <div ref={containerRef} className="relative overflow-hidden" style={{ minHeight: '300vh' }}>
+      {/* Sticky brain canvas — fills viewport, sticks to top, strictly bounded */}
+      <div className="sticky top-0 h-screen w-full z-0 bg-bg-base overflow-hidden">
         <BrainScene />
         <RegionLabels />
       </div>

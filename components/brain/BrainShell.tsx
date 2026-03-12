@@ -114,7 +114,9 @@ function fbm3(x: number, y: number, z: number, octaves: number, lacunarity: numb
 
 // ── Brain Geometry ─────────────────────────────────────────────────
 function createBrainGeometry(): THREE.BufferGeometry {
-  const geometry = new THREE.IcosahedronGeometry(1, 7)
+  // Subdivision 5 = ~20K faces / ~40K tris — within W4 performance budget
+  // (was 7 = 327K tris — way over budget)
+  const geometry = new THREE.IcosahedronGeometry(1, 5)
   const positions = geometry.attributes.position
   const count = positions.count
   const colors = new Float32Array(count * 3)
@@ -192,14 +194,15 @@ function createBrainGeometry(): THREE.BufferGeometry {
     // Set final vertex position
     positions.setXYZ(i, dx * r, dy * r, dz * r)
 
-    // ── Vertex colors: sulci darker, gyri lighter ──
+    // ── Vertex colors: sulci darker, gyri lighter — wider contrast range ──
     const foldDepth = fold1 / 0.060
     const t = foldDepth * 0.5 + 0.5
 
-    // Color palette: very dark blue-grey tones
-    const cBase   = [22 / 255, 24 / 255, 38 / 255]
-    const cRidge  = [34 / 255, 37 / 255, 58 / 255]
-    const cSulcus = [12 / 255, 12 / 255, 20 / 255]
+    // Color palette: dark graphite with visible contrast between folds
+    // W4 spec base: #1A1A24 = (26, 26, 36)
+    const cBase   = [26 / 255, 26 / 255, 36 / 255]
+    const cRidge  = [52 / 255, 55 / 255, 78 / 255]  // brighter ridges — visible folds
+    const cSulcus = [10 / 255, 10 / 255, 16 / 255]   // deeper sulci
 
     let cr: number, cg: number, cb: number
     if (t > 0.5) {
@@ -238,16 +241,11 @@ export function BrainShell() {
     return () => mq.removeEventListener('change', handler)
   }, [])
 
-  // Subtle breathing + gentle drift (NO continuous rotation)
-  useFrame((state) => {
+  // Slow continuous Y-axis rotation per W4 spec (~0.1 RPM counter-clockwise)
+  // 0.1 RPM = 0.1 * 2π / 60 ≈ 0.01047 rad/s
+  useFrame((_, delta) => {
     if (meshRef.current && !reducedMotion.current) {
-      const t = state.clock.getElapsedTime()
-      // Gentle breathing — barely perceptible scale pulse
-      const breathe = 1.0 + Math.sin(t * 0.4) * 0.005
-      meshRef.current.scale.setScalar(breathe)
-      // Subtle drift/sway — organic, not mechanical
-      meshRef.current.rotation.y = Math.sin(t * 0.12) * 0.025
-      meshRef.current.rotation.x = Math.sin(t * 0.08 + 0.5) * 0.012
+      meshRef.current.rotation.y -= delta * 0.01047
     }
   })
 
@@ -255,18 +253,18 @@ export function BrainShell() {
     <mesh ref={meshRef} geometry={geometry} renderOrder={-1}>
       <meshPhysicalMaterial
         vertexColors
-        metalness={0.05}
-        roughness={0.3}
-        transmission={0.6}
-        thickness={0.8}
-        ior={1.3}
+        metalness={0.15}
+        roughness={0.6}
+        transmission={0.3}
+        thickness={1.5}
+        ior={1.45}
         transparent
-        opacity={0.32}
-        envMapIntensity={0.15}
-        clearcoat={0.15}
-        clearcoatRoughness={0.3}
+        opacity={0.85}
+        envMapIntensity={0.3}
+        clearcoat={0.2}
+        clearcoatRoughness={0.4}
         side={THREE.FrontSide}
-        depthWrite={false}
+        depthWrite={true}
       />
     </mesh>
   )

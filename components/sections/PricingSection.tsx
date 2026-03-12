@@ -24,9 +24,8 @@ const tiers: PricingTier[] = [
     features: [
       '50K capture events/month',
       '1K synthesize calls/day',
-      '5 agent sessions',
+      '5 agents',
       'Community support',
-      'Standard API access',
     ],
     cta: 'Start Free',
     ctaVariant: 'ghost',
@@ -39,11 +38,9 @@ const tiers: PricingTier[] = [
     badge: 'Most Popular',
     features: [
       '1M capture events/month',
-      'Unlimited synthesize calls',
-      'Unlimited agent sessions',
+      'Unlimited synthesize',
+      'Unlimited agents',
       'Priority support',
-      'Advanced analytics dashboard',
-      'Webhook integrations',
     ],
     cta: 'Start Free, Upgrade Later',
     ctaVariant: 'primary',
@@ -56,12 +53,10 @@ const tiers: PricingTier[] = [
     description: 'For production workloads at scale',
     features: [
       '10M capture events/month',
-      'Unlimited synthesize calls',
-      'Unlimited agent sessions',
-      'Priority support with SLA',
-      'Advanced analytics + custom dashboards',
-      'Dedicated schema isolation',
-      'SSO integration',
+      'Unlimited synthesize',
+      'Unlimited agents',
+      'Higher rate limits',
+      'Priority support',
     ],
     cta: 'Get Started',
     ctaVariant: 'ghost',
@@ -72,14 +67,10 @@ const tiers: PricingTier[] = [
     period: '',
     description: 'For scale, compliance, and custom deployment',
     features: [
-      'Unlimited events',
-      'Unlimited everything',
+      'Custom limits',
       'Dedicated infrastructure',
-      '99.9% uptime SLA',
-      'Dedicated database isolation',
-      'On-premise / self-hosted option',
-      'Custom integrations',
-      'Dedicated support engineer',
+      'Private deployment',
+      'Direct engineering support',
     ],
     cta: 'Contact Sales',
     ctaVariant: 'ghost',
@@ -152,7 +143,7 @@ function PricingCard({ tier }: { tier: PricingTier }) {
     <article
       className={`relative flex flex-col rounded-2xl p-8 transition-all duration-300 hover:-translate-y-1 ${
         tier.highlighted
-          ? 'bg-white/[0.03] backdrop-blur-sm border border-accent-cyan/40 shadow-[0_0_40px_rgba(0,229,204,0.08)] -translate-y-2 animate-[cta-glow_4s_ease-in-out_infinite]'
+          ? 'bg-white/[0.03] backdrop-blur-sm border border-accent-cyan/30 shadow-[0_0_24px_rgba(0,229,204,0.06)] -translate-y-1'
           : 'bg-white/[0.03] backdrop-blur-sm border border-white/[0.08]'
       }`}
     >
@@ -166,7 +157,7 @@ function PricingCard({ tier }: { tier: PricingTier }) {
 
       <div className="mt-4 flex items-baseline">
         <span
-          className="text-[48px] md:text-[64px] lg:text-[96px] font-mono font-medium text-text-primary leading-none"
+          className="text-[36px] md:text-[40px] lg:text-[48px] font-mono font-medium text-text-primary leading-none"
           style={{ fontFeatureSettings: '"tnum"' }}
           aria-label={tier.period ? `${tier.price} per month` : tier.price}
         >

@@ -10,13 +10,16 @@ import { SignalPathways } from './SignalPathways'
 function BrainContent() {
   return (
     <>
-      {/* Lighting — minimal for performance; no Environment HDR needed */}
-      <ambientLight intensity={0.25} />
-      <directionalLight position={[5, 5, 5]} intensity={0.4} color="#C8C8D0" />
-      <directionalLight position={[-3, -2, 4]} intensity={0.2} color="#00E5CC" />
-
-      {/* Rim light for edge definition */}
-      <pointLight position={[0, 0, -3]} intensity={0.3} color="#8B5CF6" />
+      {/* Lighting — strong key/fill for hemisphere silhouette definition */}
+      <ambientLight intensity={0.12} />
+      {/* Key light — above-right, cool white for top-lit feel */}
+      <directionalLight position={[3, 4, 5]} intensity={0.6} color="#C8C8D0" />
+      {/* Fill light — opposite side, dim, slight cyan tint */}
+      <directionalLight position={[-4, -1, 3]} intensity={0.15} color="#06B6D4" />
+      {/* Back rim — edge definition from behind */}
+      <directionalLight position={[0, 2, -4]} intensity={0.35} color="#A0A0B0" />
+      {/* Subtle bottom fill for brain stem visibility */}
+      <pointLight position={[0, -2, 2]} intensity={0.1} color="#8B5CF6" />
 
       {/* Brain layers — slight 3/4 angle for better topology readability */}
       <group position={[0, 0, 0]} scale={1.3} rotation={[0.10, -0.30, 0]}>
@@ -25,12 +28,12 @@ function BrainContent() {
         <SignalPathways />
       </group>
 
-      {/* Post-processing — bloom tuned for visible glow on nodes/pathways */}
+      {/* Post-processing — bloom tuned per W4: threshold 0.6, strength 0.8 */}
       <EffectComposer>
         <Bloom
-          intensity={1.2}
-          luminanceThreshold={0.2}
-          luminanceSmoothing={0.8}
+          intensity={0.8}
+          luminanceThreshold={0.6}
+          luminanceSmoothing={0.4}
           mipmapBlur
         />
       </EffectComposer>

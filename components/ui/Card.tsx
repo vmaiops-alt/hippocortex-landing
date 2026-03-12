@@ -28,9 +28,9 @@ export function Card({
     glass: `
       bg-white/[0.03] backdrop-blur-sm border border-white/[0.08] rounded-2xl p-8
       hover:-translate-y-1 hover:bg-white/[0.05] hover:border-white/[0.12]
-      hover:shadow-[0_8px_32px_rgba(0,0,0,0.3)]
+      hover:shadow-[0_4px_20px_rgba(0,0,0,0.25)]
       transition-all duration-300
-      ${highlighted ? '-translate-y-2 border-accent-cyan/40 shadow-[0_0_40px_rgba(0,229,204,0.08)]' : ''}
+      ${highlighted ? '-translate-y-1 border-accent-cyan/30 shadow-[0_0_24px_rgba(0,229,204,0.06)]' : ''}
     `,
     solid: `
       bg-bg-surface border border-border-subtle rounded-2xl p-8

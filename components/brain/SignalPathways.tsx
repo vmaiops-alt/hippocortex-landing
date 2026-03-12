@@ -105,8 +105,13 @@ export function SignalPathways() {
     [pathways]
   )
   const tubeGeometries = useMemo(
-    () => curves.map((curve) => new THREE.TubeGeometry(curve, 32, 0.018, 8, false)),
-    [curves]
+    () =>
+      curves.map((curve, i) => {
+        // Primary pathways: slightly thicker; secondary: thinner
+        const radius = pathways[i].type === 'primary' ? 0.012 : 0.006
+        return new THREE.TubeGeometry(curve, 32, radius, 6, false)
+      }),
+    [curves, pathways]
   )
 
   // Expanded pulse pool: normally 3, up to 10 for synthesis convergence
@@ -150,15 +155,16 @@ export function SignalPathways() {
   }, [])
 
   // Materials for pathways — stable refs
+  // Signals are the VISUAL HERO (W4 §2): use HDR emissive output + toneMapped:false
   const materialsRef = useRef(
     pathways.map((p) => {
       const mat = new THREE.MeshBasicMaterial({
         color: p.color,
         transparent: true,
-        opacity: 0.30,
+        opacity: 0.12,  // dormant: barely visible thin lines
         blending: THREE.AdditiveBlending,
         depthWrite: false,
-        toneMapped: false,
+        toneMapped: false,  // allows HDR values > 1.0 to trigger bloom
       })
       return mat
     })
@@ -229,6 +235,11 @@ export function SignalPathways() {
       })
     }
 
+    // Reset material colors to base each frame (pulses will boost them)
+    pathways.forEach((p, idx) => {
+      materialsRef.current[idx].color.copy(p.color)
+    })
+
     // Update pathway opacities based on active state
     pathways.forEach((p, idx) => {
       const mat = materialsRef.current[idx]
@@ -237,19 +248,18 @@ export function SignalPathways() {
 
       let targetOpacity: number
       if (isSynthesis) {
-        // During compression: pathways that lead to synthesizer brighten
         const leadsToSynth = p.to === 'synthesizer' || p.to === 'compiler'
         if (synthElapsed < 2.5) {
-          targetOpacity = leadsToSynth ? 0.8 : 0.15
+          targetOpacity = leadsToSynth ? 0.6 : 0.08
         } else {
-          targetOpacity = 0.10
+          targetOpacity = 0.06
         }
       } else if (state === 'IDLE' || state === 'DORMANT') {
-        targetOpacity = 0.30
+        targetOpacity = 0.12  // dormant — barely visible tracery
       } else if (isRelevant) {
-        targetOpacity = 0.70
+        targetOpacity = 0.35  // active region — clear but not overwhelming
       } else {
-        targetOpacity = 0.15
+        targetOpacity = 0.06  // inactive — nearly invisible
       }
 
       mat.opacity += (targetOpacity - mat.opacity) * delta * 3
@@ -298,21 +308,50 @@ export function SignalPathways() {
       }
     }
 
-    // Update active pulses
+    // Update active pulses — SIGNALS ARE THE VISUAL HERO
+    // Since we use per-tube materials (not per-vertex shaders), the entire tube
+    // glows when a pulse travels through it. We shape brightness as an envelope:
+    // ramp up → sustained peak → ramp down, with a trailing afterglow.
     pulses.forEach((pulse) => {
       if (!pulse.active) return
 
       pulse.progress += delta * pulse.speed
 
       const mat = materialsRef.current[pulse.pathwayIdx]
-      if (pulse.progress >= 0) {
-        const pulseEmissive =
-          Math.max(0, 1.0 - Math.abs(pulse.progress - 0.5) * 4) * 1.0
-        mat.opacity = Math.max(mat.opacity, 0.30 + pulseEmissive)
+      if (pulse.progress >= 0 && pulse.progress <= 1) {
+        const p = pulse.progress
+
+        // Envelope: quick attack (0→0.15), sustained peak (0.15→0.7), fade (0.7→1.0)
+        let envelope: number
+        if (p < 0.15) {
+          envelope = p / 0.15  // ramp up
+        } else if (p < 0.7) {
+          envelope = 1.0  // sustained peak
+        } else {
+          envelope = 1.0 - (p - 0.7) / 0.3  // fade out
+        }
+
+        // Emissive intensity per W4: up to 4.0 drives bloom
+        const signalStrength = envelope * 3.0
+
+        // Boost opacity: dormant 0.12 → active ~1.0
+        mat.opacity = Math.max(mat.opacity, 0.15 + signalStrength * 0.28)
+
+        // HDR color boost: push RGB above 1.0 for bloom trigger
+        const pathway = pathways[pulse.pathwayIdx]
+        const boost = signalStrength * 0.5
+        mat.color.setRGB(
+          pathway.color.r + boost,
+          pathway.color.g + boost,
+          pathway.color.b + boost
+        )
       }
 
       if (pulse.progress >= 1) {
         pulse.active = false
+        // Reset color to base after pulse completes
+        const pathway = pathways[pulse.pathwayIdx]
+        mat.color.copy(pathway.color)
       }
     })
   })

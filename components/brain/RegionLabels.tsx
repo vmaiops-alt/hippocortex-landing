@@ -18,56 +18,58 @@ interface LabelConfig {
   lineLength: number
 }
 
+// Labels positioned at brain edges with clear separation from center
+// Left-side regions → labels to the left, right-side and top → right
 const LABELS: LabelConfig[] = [
   {
     id: 'episodic',
     title: 'Episodic Memory',
     subtitle: 'Time-ordered experience traces',
     color: '#06B6D4',
-    dotX: 60,
-    dotY: 60,
+    dotX: 62,
+    dotY: 62,
     direction: 'right',
-    lineLength: 60,
+    lineLength: 80,
   },
   {
     id: 'semantic',
     title: 'Semantic Memory',
     subtitle: 'Learned facts and preferences',
     color: '#8B5CF6',
-    dotX: 63,
-    dotY: 45,
+    dotX: 66,
+    dotY: 44,
     direction: 'right',
-    lineLength: 70,
+    lineLength: 90,
   },
   {
     id: 'graph',
     title: 'Graph Memory',
     subtitle: 'Entities and relationships',
     color: '#A78BFA',
-    dotX: 58,
-    dotY: 28,
+    dotX: 62,
+    dotY: 26,
     direction: 'right',
-    lineLength: 65,
+    lineLength: 85,
   },
   {
     id: 'compiler',
     title: 'Memory Compiler',
     subtitle: 'Pattern extraction engine',
     color: '#F59E0B',
-    dotX: 45,
-    dotY: 52,
+    dotX: 38,
+    dotY: 54,
     direction: 'left',
-    lineLength: 70,
+    lineLength: 90,
   },
   {
     id: 'synthesizer',
     title: 'Context Synthesis',
     subtitle: 'Compressed reasoning output',
     color: '#E8E8F0',
-    dotX: 50,
-    dotY: 22,
+    dotX: 52,
+    dotY: 18,
     direction: 'right',
-    lineLength: 60,
+    lineLength: 80,
   },
 ]
 

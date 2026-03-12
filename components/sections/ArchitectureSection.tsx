@@ -1,7 +1,6 @@
 'use client'
 
 import { Button } from '@/components/ui/Button'
-import { BrainStickySection } from '@/components/brain/BrainStickySection'
 import { ScrollReveal } from '@/components/motion/ScrollReveal'
 
 export function ArchitectureSection() {
@@ -12,7 +11,7 @@ export function ArchitectureSection() {
       aria-labelledby="architecture-heading"
     >
       {/* Section header */}
-      <div className="max-w-[1200px] mx-auto px-4 md:px-6 pt-16 md:pt-20 lg:pt-24">
+      <div className="max-w-[1200px] mx-auto px-4 md:px-6 py-16 md:py-20 lg:py-24">
         <ScrollReveal className="text-center">
           <span className="text-xs font-medium text-accent-cyan tracking-[0.12em] uppercase">
             THE ARCHITECTURE
@@ -32,17 +31,7 @@ export function ArchitectureSection() {
         </ScrollReveal>
       </div>
 
-      {/* Sticky brain + scroll panels */}
-      <div className="mt-8 md:mt-12">
-        <BrainStickySection />
-      </div>
-
-      {/* CTA */}
-      <div className="max-w-[1200px] mx-auto px-4 md:px-6 pb-16 md:pb-20 lg:pb-24 text-center">
-        <Button href="https://docs.hippocortex.dev/architecture" variant="text" external>
-          Explore the architecture guide →
-        </Button>
-      </div>
+      {/* BrainStickySection is rendered directly after this in page.tsx — no duplicate here */}
     </section>
   )
 }

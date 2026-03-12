@@ -116,10 +116,8 @@ export function HeroSection() {
             </div>
           </div>
 
-          {/* Brain canvas — right 7 cols */}
-          <div className="lg:col-span-7 relative h-[400px] md:h-[500px] lg:h-[600px]">
-            <div id="hero-brain-mount" className="w-full h-full" />
-          </div>
+          {/* Right column spacer — brain lives in the sticky section below */}
+          <div className="hidden lg:block lg:col-span-7" aria-hidden="true" />
         </div>
       </div>
 

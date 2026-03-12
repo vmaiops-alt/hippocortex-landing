@@ -5,7 +5,7 @@ import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
 import { useBrainStore, BrainState } from '@/lib/store'
 
-const NODE_COUNT = 160
+const NODE_COUNT = 100  // Reduced from 160 — cleaner scene, less visual noise
 const BRAIN_RADIUS = 1.05  // Fit inside the brain ellipsoid (smallest semi-axis ~0.88)
 
 // Seeded random for deterministic node positions
@@ -74,7 +74,7 @@ export function SynapseNodes() {
   // Reusable objects — allocated once, never in the frame loop
   const dummy = useMemo(() => new THREE.Object3D(), [])
   const colorsRef = useRef(new Float32Array(NODE_COUNT * 3))
-  const opacitiesRef = useRef(new Float32Array(NODE_COUNT).fill(0.5))
+  const opacitiesRef = useRef(new Float32Array(NODE_COUNT).fill(0.15))
   const burstTimerRef = useRef(0)
   const burstRng = useRef(seededRandom(99))
 
@@ -154,38 +154,34 @@ export function SynapseNodes() {
       let extraScale = 1.0
 
       if (isSynthesis) {
-        // ── COMPRESSION SEQUENCE ──
+        // ── COMPRESSION SEQUENCE (per W4 §4.4) ──
         if (synthElapsed < 2.0) {
           // Phase 1: Signal activity rise — synthesizer brightens, others dim
           const ramp = Math.min(synthElapsed / 2.0, 1.0)
           if (isSynthRegion) {
-            targetOpacity = 0.5 + ramp * 0.5
+            targetOpacity = 0.3 + ramp * 0.7
           } else {
-            targetOpacity = 0.5 - ramp * 0.35
+            targetOpacity = 0.15 - ramp * 0.10
           }
         } else if (synthElapsed < 2.5) {
           // Phase 2: Node dimming — all except synthesizer cluster fade
-          const dimProgress = (synthElapsed - 2.0) / 0.5
           if (isSynthRegion) {
             targetOpacity = 1.0
           } else {
-            targetOpacity = Math.max(0.1, 0.15 + (1.0 - dimProgress) * 0.0)
+            targetOpacity = 0.02
           }
         } else if (synthElapsed < 3.3) {
           // Phase 3: Compression snap — synthesizer nodes converge to center
           const snapProgress = Math.min((synthElapsed - 2.5) / 0.8, 1.0)
-          // Dramatic easing: fast start, sharp decel
+          // Dramatic easing per W4: fast start, sharp decel
           const eased = 1.0 - Math.pow(1.0 - snapProgress, 3)
 
           if (isSynthRegion) {
-            // Lerp position toward SYNTH_CENTER
             x = origX + (SYNTH_CENTER.x - origX) * eased
             y = origY + (SYNTH_CENTER.y - origY) * eased
             z = origZ + (SYNTH_CENTER.z - origZ) * eased
-
-            // Intensify as they converge
             targetOpacity = 1.0
-            extraScale = 1.0 + snapProgress * 1.5 // grow brighter/bigger
+            extraScale = 1.0 + snapProgress * 0.8
           } else {
             targetOpacity = 0.02
           }
@@ -196,37 +192,39 @@ export function SynapseNodes() {
             y = SYNTH_CENTER.y
             z = SYNTH_CENTER.z
             targetOpacity = 1.0
-            extraScale = 2.0
+            extraScale = 1.5
           } else {
             targetOpacity = 0.02
           }
         } else {
-          // Phase 5: Hold — single modest glow
+          // Phase 5: Hold — ease back to modest glow
           if (isSynthRegion) {
-            // Ease back from peak
             const holdProgress = Math.min((synthElapsed - 3.9) / 0.4, 1.0)
             x = SYNTH_CENTER.x + (origX - SYNTH_CENTER.x) * holdProgress * 0.3
             y = SYNTH_CENTER.y + (origY - SYNTH_CENTER.y) * holdProgress * 0.3
             z = SYNTH_CENTER.z + (origZ - SYNTH_CENTER.z) * holdProgress * 0.3
-            targetOpacity = 1.0 - holdProgress * 0.2
-            extraScale = 2.0 - holdProgress * 1.0
+            targetOpacity = 1.0 - holdProgress * 0.3
+            extraScale = 1.5 - holdProgress * 0.5
           } else {
             targetOpacity = 0.05
           }
         }
       } else {
-        // ── NORMAL STATE BEHAVIOR ──
+        // ── NORMAL STATE BEHAVIOR (per W4 §2.2) ──
         if (state === 'IDLE' || state === 'DORMANT') {
-          targetOpacity = 0.5
+          // Idle: dim, barely visible — synapse sparks, not bubbles
+          targetOpacity = 0.15
         } else if (isActive) {
-          targetOpacity = 0.95
+          // Active region: moderate brightness (burst will push higher)
+          targetOpacity = 0.7
         } else {
-          targetOpacity = 0.25
+          // Inactive during active state: very dim
+          targetOpacity = 0.08
         }
 
-        // Idle burst effect
+        // Idle burst effect — small cluster of 3-5 nodes every 3-5s
         if (state === 'IDLE' && burstTimerRef.current > 3.5) {
-          if (burstRng.current() < 0.03) {
+          if (burstRng.current() < 0.04) {
             targetOpacity = 1.0
           }
         }
@@ -242,14 +240,18 @@ export function SynapseNodes() {
       }
 
       dummy.position.set(x, y, z)
-      const baseScale = 0.045 + opacitiesRef.current[i] * 0.030
+      // Node size: idle ~0.012 (tiny spark), burst ~0.025 (small flash)
+      // Reduced to ~30% of original — nodes are secondary to signals
+      const baseScale = 0.012 + opacitiesRef.current[i] * 0.013
       dummy.scale.setScalar(baseScale * extraScale)
       dummy.updateMatrix()
       mesh.setMatrixAt(i, dummy.matrix)
 
       const regionColor = REGION_COLORS[regionIds[i]]
-      // Boost intensity for HDR glow — values >1.0 will trigger bloom
-      const intensity = opacitiesRef.current[i] * 2.0
+      // HDR glow: idle barely visible, only bursts trigger bloom (>0.6 threshold)
+      // At idle (0.15 opacity): intensity = 0.15 * 1.2 = 0.18 — below bloom threshold
+      // At burst (1.0 opacity): intensity = 1.0 * 1.2 = 1.2 — triggers bloom
+      const intensity = opacitiesRef.current[i] * 1.2
       colorsRef.current[i * 3] = regionColor.r * intensity
       colorsRef.current[i * 3 + 1] = regionColor.g * intensity
       colorsRef.current[i * 3 + 2] = regionColor.b * intensity
@@ -267,7 +269,7 @@ export function SynapseNodes() {
       args={[undefined, undefined, NODE_COUNT]}
       frustumCulled={false}
     >
-      <sphereGeometry args={[1, 10, 10]} />
+      <sphereGeometry args={[1, 6, 6]} />
       <meshBasicMaterial
         color="#ffffff"
         transparent

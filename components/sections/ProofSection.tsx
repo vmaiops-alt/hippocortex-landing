@@ -49,14 +49,17 @@ export function ProofSection() {
           </h2>
         </ScrollReveal>
 
-        {/* Metrics with count-up */}
+        {/* Metrics — 4-column responsive grid */}
         <StaggerReveal
-          className="mt-8 md:mt-10 lg:mt-12 grid grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-0"
+          className="mt-8 md:mt-10 lg:mt-12 grid grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-6"
           stagger={150}
         >
           {metrics.map((metric) => (
-            <div key={metric.label} className="text-center">
-              <div className="text-[48px] md:text-[64px] lg:text-[96px] font-mono font-medium text-text-primary leading-none">
+            <div
+              key={metric.label}
+              className="text-center px-2 lg:px-4 lg:border-r lg:border-border-subtle lg:last:border-r-0"
+            >
+              <div className="text-[36px] md:text-[44px] lg:text-[52px] font-mono font-medium text-text-primary leading-none">
                 {metric.noCount ? (
                   <span
                     style={{ fontFeatureSettings: '"tnum"' }}
@@ -74,7 +77,7 @@ export function ProofSection() {
                   />
                 )}
               </div>
-              <div className="mt-2 text-sm font-medium text-text-tertiary">
+              <div className="mt-3 text-sm font-medium text-text-tertiary">
                 {metric.label}
               </div>
               <div className="mt-1 text-xs text-text-muted">
