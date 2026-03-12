@@ -18,19 +18,19 @@ function BrainContent() {
       {/* Rim light for edge definition */}
       <pointLight position={[0, 0, -3]} intensity={0.3} color="#8B5CF6" />
 
-      {/* Brain layers */}
-      <group position={[0, 0, 0]} scale={1.3}>
+      {/* Brain layers — slight 3/4 angle for better topology readability */}
+      <group position={[0, 0, 0]} scale={1.3} rotation={[0.10, -0.30, 0]}>
         <BrainShell />
         <SynapseNodes />
         <SignalPathways />
       </group>
 
-      {/* Post-processing — tuned bloom: atmospheric, not overpowering */}
+      {/* Post-processing — bloom tuned for visible glow on nodes/pathways */}
       <EffectComposer>
         <Bloom
-          intensity={0.6}
-          luminanceThreshold={0.35}
-          luminanceSmoothing={0.85}
+          intensity={1.2}
+          luminanceThreshold={0.2}
+          luminanceSmoothing={0.8}
           mipmapBlur
         />
       </EffectComposer>

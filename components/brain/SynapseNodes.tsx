@@ -6,7 +6,7 @@ import * as THREE from 'three'
 import { useBrainStore, BrainState } from '@/lib/store'
 
 const NODE_COUNT = 160
-const BRAIN_RADIUS = 1.2
+const BRAIN_RADIUS = 1.05  // Fit inside the brain ellipsoid (smallest semi-axis ~0.88)
 
 // Seeded random for deterministic node positions
 function seededRandom(seed: number): () => number {
@@ -74,7 +74,7 @@ export function SynapseNodes() {
   // Reusable objects — allocated once, never in the frame loop
   const dummy = useMemo(() => new THREE.Object3D(), [])
   const colorsRef = useRef(new Float32Array(NODE_COUNT * 3))
-  const opacitiesRef = useRef(new Float32Array(NODE_COUNT).fill(0.3))
+  const opacitiesRef = useRef(new Float32Array(NODE_COUNT).fill(0.5))
   const burstTimerRef = useRef(0)
   const burstRng = useRef(seededRandom(99))
 
@@ -159,9 +159,9 @@ export function SynapseNodes() {
           // Phase 1: Signal activity rise — synthesizer brightens, others dim
           const ramp = Math.min(synthElapsed / 2.0, 1.0)
           if (isSynthRegion) {
-            targetOpacity = 0.3 + ramp * 0.7
+            targetOpacity = 0.5 + ramp * 0.5
           } else {
-            targetOpacity = 0.3 - ramp * 0.25
+            targetOpacity = 0.5 - ramp * 0.35
           }
         } else if (synthElapsed < 2.5) {
           // Phase 2: Node dimming — all except synthesizer cluster fade
@@ -169,7 +169,7 @@ export function SynapseNodes() {
           if (isSynthRegion) {
             targetOpacity = 1.0
           } else {
-            targetOpacity = Math.max(0.05, 0.05 + (1.0 - dimProgress) * 0.0)
+            targetOpacity = Math.max(0.1, 0.15 + (1.0 - dimProgress) * 0.0)
           }
         } else if (synthElapsed < 3.3) {
           // Phase 3: Compression snap — synthesizer nodes converge to center
@@ -215,13 +215,13 @@ export function SynapseNodes() {
           }
         }
       } else {
-        // ── NORMAL STATE BEHAVIOR (unchanged) ──
+        // ── NORMAL STATE BEHAVIOR ──
         if (state === 'IDLE' || state === 'DORMANT') {
-          targetOpacity = 0.3
+          targetOpacity = 0.5
         } else if (isActive) {
-          targetOpacity = 0.8
+          targetOpacity = 0.95
         } else {
-          targetOpacity = 0.15
+          targetOpacity = 0.25
         }
 
         // Idle burst effect
@@ -242,13 +242,14 @@ export function SynapseNodes() {
       }
 
       dummy.position.set(x, y, z)
-      const baseScale = 0.012 + opacitiesRef.current[i] * 0.008
+      const baseScale = 0.045 + opacitiesRef.current[i] * 0.030
       dummy.scale.setScalar(baseScale * extraScale)
       dummy.updateMatrix()
       mesh.setMatrixAt(i, dummy.matrix)
 
       const regionColor = REGION_COLORS[regionIds[i]]
-      const intensity = opacitiesRef.current[i]
+      // Boost intensity for HDR glow — values >1.0 will trigger bloom
+      const intensity = opacitiesRef.current[i] * 2.0
       colorsRef.current[i * 3] = regionColor.r * intensity
       colorsRef.current[i * 3 + 1] = regionColor.g * intensity
       colorsRef.current[i * 3 + 2] = regionColor.b * intensity
@@ -266,8 +267,15 @@ export function SynapseNodes() {
       args={[undefined, undefined, NODE_COUNT]}
       frustumCulled={false}
     >
-      <sphereGeometry args={[1, 8, 8]} />
-      <meshBasicMaterial color="#ffffff" transparent opacity={0.8} />
+      <sphereGeometry args={[1, 10, 10]} />
+      <meshBasicMaterial
+        color="#ffffff"
+        transparent
+        opacity={1.0}
+        blending={THREE.AdditiveBlending}
+        depthWrite={false}
+        toneMapped={false}
+      />
       <instancedBufferAttribute
         attach="instanceColor"
         args={[colorsRef.current, 3]}

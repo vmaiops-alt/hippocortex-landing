@@ -268,7 +268,7 @@ export function BrainStickySection() {
   return (
     <div ref={containerRef} className="relative" style={{ minHeight: '300vh' }}>
       {/* Sticky brain canvas — fills viewport, sticks to top */}
-      <div className="sticky top-0 h-screen w-full z-0">
+      <div className="sticky top-0 h-screen w-full z-0 bg-bg-base">
         <BrainScene />
         <RegionLabels />
       </div>

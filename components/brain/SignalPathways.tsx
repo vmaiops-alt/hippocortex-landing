@@ -105,7 +105,7 @@ export function SignalPathways() {
     [pathways]
   )
   const tubeGeometries = useMemo(
-    () => curves.map((curve) => new THREE.TubeGeometry(curve, 32, 0.006, 6, false)),
+    () => curves.map((curve) => new THREE.TubeGeometry(curve, 32, 0.018, 8, false)),
     [curves]
   )
 
@@ -155,7 +155,10 @@ export function SignalPathways() {
       const mat = new THREE.MeshBasicMaterial({
         color: p.color,
         transparent: true,
-        opacity: 0.15,
+        opacity: 0.30,
+        blending: THREE.AdditiveBlending,
+        depthWrite: false,
+        toneMapped: false,
       })
       return mat
     })
@@ -237,18 +240,16 @@ export function SignalPathways() {
         // During compression: pathways that lead to synthesizer brighten
         const leadsToSynth = p.to === 'synthesizer' || p.to === 'compiler'
         if (synthElapsed < 2.5) {
-          // Convergence phase: relevant pathways bright
-          targetOpacity = leadsToSynth ? 0.5 : 0.08
+          targetOpacity = leadsToSynth ? 0.8 : 0.15
         } else {
-          // Post-compression: everything dims
-          targetOpacity = 0.05
+          targetOpacity = 0.10
         }
       } else if (state === 'IDLE' || state === 'DORMANT') {
-        targetOpacity = 0.15
+        targetOpacity = 0.30
       } else if (isRelevant) {
-        targetOpacity = 0.4
+        targetOpacity = 0.70
       } else {
-        targetOpacity = 0.08
+        targetOpacity = 0.15
       }
 
       mat.opacity += (targetOpacity - mat.opacity) * delta * 3
@@ -306,8 +307,8 @@ export function SignalPathways() {
       const mat = materialsRef.current[pulse.pathwayIdx]
       if (pulse.progress >= 0) {
         const pulseEmissive =
-          Math.max(0, 1.0 - Math.abs(pulse.progress - 0.5) * 4) * 0.6
-        mat.opacity = Math.max(mat.opacity, 0.15 + pulseEmissive)
+          Math.max(0, 1.0 - Math.abs(pulse.progress - 0.5) * 4) * 1.0
+        mat.opacity = Math.max(mat.opacity, 0.30 + pulseEmissive)
       }
 
       if (pulse.progress >= 1) {

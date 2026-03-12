@@ -4,19 +4,14 @@ import { useRef, useMemo, useEffect } from 'react'
 import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
 
-// ── Premium Cortical Form ──────────────────────────────────────────
-// Option C: intentionally abstract "neural topology" mesh.
-// High-resolution icosahedron + multi-octave 3D simplex noise for
-// organic cortical folds. NOT a brain replica — a cinematic
-// "intelligent structure" that reads as premium and intentional.
+// ── Brain-Shaped Cortical Form ─────────────────────────────────────
+// Two-hemisphere brain with central fissure, cortical folds, and
+// glass-like transparency so internal nodes/pathways show through.
 
 // ── Simplex 3D noise (compact, allocation-free) ────────────────────
-// Adapted from Stefan Gustavson's simplex noise.
-
 const F3 = 1.0 / 3.0
 const G3 = 1.0 / 6.0
 
-// Permutation table (seeded, deterministic)
 const perm = new Uint8Array(512)
 const grad3 = [
   1, 1, 0, -1, 1, 0, 1, -1, 0, -1, -1, 0,
@@ -100,10 +95,9 @@ function simplex3(x: number, y: number, z: number): number {
     const gi = (perm[ii + 1 + perm[jj + 1 + perm[kk + 1]]] % 12) * 3
     n3 = t3 * t3 * (grad3[gi] * x3 + grad3[gi + 1] * y3 + grad3[gi + 2] * z3)
   }
-  return 32.0 * (n0 + n1 + n2 + n3) // range roughly -1..1
+  return 32.0 * (n0 + n1 + n2 + n3)
 }
 
-// Multi-octave fractal noise
 function fbm3(x: number, y: number, z: number, octaves: number, lacunarity: number, gain: number): number {
   let value = 0
   let amplitude = 1.0
@@ -118,87 +112,111 @@ function fbm3(x: number, y: number, z: number, octaves: number, lacunarity: numb
   return value / maxValue
 }
 
-// ── Cortical Form Geometry ─────────────────────────────────────────
-function createCorticalGeometry(): THREE.BufferGeometry {
-  // Higher subdivision for smooth, organic form
-  const geometry = new THREE.IcosahedronGeometry(1.15, 7)
+// ── Brain Geometry ─────────────────────────────────────────────────
+function createBrainGeometry(): THREE.BufferGeometry {
+  const geometry = new THREE.IcosahedronGeometry(1, 7)
   const positions = geometry.attributes.position
-  const normals = geometry.attributes.normal
+  const count = positions.count
+  const colors = new Float32Array(count * 3)
 
-  // Also generate vertex colors for fold-depth variation
-  const vertexCount = positions.count
-  const colors = new Float32Array(vertexCount * 3)
+  // Brain ellipsoid semi-axes (wider than tall, slightly elongated front-to-back)
+  const semiX = 1.22  // width — widest dimension
+  const semiY = 0.88  // height — shorter
+  const semiZ = 1.04  // depth — slightly elongated
 
-  // Base color: dark graphite #1A1A24 → rgb(26/255, 26/255, 36/255)
-  const baseR = 26 / 255
-  const baseG = 26 / 255
-  const baseB = 36 / 255
+  for (let i = 0; i < count; i++) {
+    const ox = positions.getX(i)
+    const oy = positions.getY(i)
+    const oz = positions.getZ(i)
 
-  // Ridge highlight: slightly lighter
-  const ridgeR = 38 / 255
-  const ridgeG = 38 / 255
-  const ridgeB = 52 / 255
+    // Direction from center (icosahedron vertices are on unit sphere)
+    const len = Math.sqrt(ox * ox + oy * oy + oz * oz)
+    const dx = ox / len
+    const dy = oy / len
+    const dz = oz / len
 
-  // Fold shadow: even darker
-  const foldR = 14 / 255
-  const foldG = 14 / 255
-  const foldB = 20 / 255
-
-  for (let i = 0; i < vertexCount; i++) {
-    const x = positions.getX(i)
-    const y = positions.getY(i)
-    const z = positions.getZ(i)
-
-    const nx = normals.getX(i)
-    const ny = normals.getY(i)
-    const nz = normals.getZ(i)
-
-    // ── Primary cortical folds (large-scale structure) ──
-    // Low-frequency: overall brain shape distortion
-    const fold1 = fbm3(x * 2.2, y * 2.2, z * 2.2, 4, 2.0, 0.5) * 0.10
-
-    // ── Sulci and gyri (medium-scale cortical grooves) ──
-    const fold2 = fbm3(x * 4.5 + 7.3, y * 4.5 + 3.1, z * 4.5 + 11.7, 3, 2.2, 0.45) * 0.045
-
-    // ── Micro-surface detail (fine wrinkle texture) ──
-    const fold3 = fbm3(x * 9.0 + 17.0, y * 9.0 + 5.0, z * 9.0 + 23.0, 2, 2.5, 0.4) * 0.018
-
-    // ── Brain asymmetry: slightly wider at sides, tapered front/back ──
-    const lateralBulge = 1.0 + Math.abs(x) * 0.12
-    // Slight elongation front-to-back
-    const apBulge = 1.0 + z * 0.06
-    // Wider top, narrow bottom (cranial shape)
-    const verticalShape = 1.0 + y * 0.10 - Math.max(0, -y - 0.6) * 0.3
-
-    // Combined displacement
-    const totalDisplacement = (fold1 + fold2 + fold3) * lateralBulge * apBulge * verticalShape
-
-    // Displace along normal
-    positions.setXYZ(
-      i,
-      x + nx * totalDisplacement,
-      y + ny * totalDisplacement * 0.85,
-      z + nz * totalDisplacement
+    // 1. Base ellipsoid radius in this direction
+    let r = 1.0 / Math.sqrt(
+      (dx * dx) / (semiX * semiX) +
+      (dy * dy) / (semiY * semiY) +
+      (dz * dz) / (semiZ * semiZ)
     )
 
-    // ── Vertex color: darker in folds, lighter on ridges ──
-    // Use the medium-frequency noise to determine fold depth
-    const foldDepth = fold2 / 0.045 // normalize to roughly -1..1
-    const t = foldDepth * 0.5 + 0.5 // 0..1
+    // 2. Longitudinal fissure — central groove at x≈0, dorsal surface (y>0)
+    //    Runs anterior-posterior (along z-axis), deepest at crown
+    const px = dx * r  // approximate x position
+    const py = dy * r  // approximate y position
+    const fissureWidth = 0.055
+    const fissureGaussian = Math.exp(-(px * px) / (2 * fissureWidth * fissureWidth))
+    const topWeight = Math.pow(Math.max(0, py / semiY), 0.6)
+    const fissureDepth = 0.20
+    r -= fissureGaussian * topWeight * fissureDepth
 
-    if (t > 0.55) {
-      // Ridge: blend toward highlight
-      const ridgeMix = (t - 0.55) / 0.45
-      colors[i * 3] = baseR + (ridgeR - baseR) * ridgeMix
-      colors[i * 3 + 1] = baseG + (ridgeG - baseG) * ridgeMix
-      colors[i * 3 + 2] = baseB + (ridgeB - baseB) * ridgeMix
+    // 3. Lateral sulcus hint (Sylvian fissure) — groove on each side
+    const absX = Math.abs(dx * r)
+    const sylvianZone = Math.exp(-((absX - 0.8) * (absX - 0.8)) / 0.04)
+    const sylvianY = Math.exp(-((py + 0.1) * (py + 0.1)) / 0.06)
+    r -= sylvianZone * sylvianY * 0.04
+
+    // 4. Temporal lobe bulge (lower sides, below Sylvian fissure)
+    const lowSide = Math.max(0, -dy - 0.15) * Math.abs(dx)
+    r += lowSide * 0.10
+
+    // 5. Frontal pole — slight forward prominence
+    const frontal = Math.max(0, dz - 0.3) * Math.max(0, dy + 0.3)
+    r += frontal * 0.05
+
+    // 6. Occipital bump — back of head, slightly lower
+    const occipital = Math.max(0, -dz - 0.5) * Math.max(0, -dy + 0.2)
+    r += occipital * 0.035
+
+    // 7. Flatten bottom (brain base / ventral surface)
+    const bottom = Math.max(0, -dy - 0.55)
+    r -= bottom * 0.20
+
+    // 8. Cortical folds — anisotropic noise for elongated gyri/sulci
+    //    Higher lateral frequency → more grooves perpendicular to midline
+    //    Lower AP frequency → folds run primarily front-to-back (longitudinal)
+    const fx = dx * r * 3.2
+    const fy = dy * r * 2.6
+    const fz = dz * r * 1.9
+
+    const fold1 = fbm3(fx, fy, fz, 4, 2.0, 0.5) * 0.060          // primary gyri
+    const fold2 = fbm3(fx * 2 + 7.3, fy * 1.5 + 3.1, fz * 2 + 11.7, 3, 2.2, 0.45) * 0.025  // secondary sulci
+    const fold3 = fbm3(fx * 4 + 17, fy * 3 + 5, fz * 4 + 23, 2, 2.5, 0.4) * 0.010           // micro texture
+
+    // Reduce folds inside fissure and at brain base
+    const foldMask = 1.0 - fissureGaussian * topWeight * 0.5 - Math.max(0, -dy - 0.5) * 0.5
+    r += (fold1 + fold2 + fold3) * Math.max(0.15, foldMask)
+
+    // Set final vertex position
+    positions.setXYZ(i, dx * r, dy * r, dz * r)
+
+    // ── Vertex colors: sulci darker, gyri lighter ──
+    const foldDepth = fold1 / 0.060
+    const t = foldDepth * 0.5 + 0.5
+
+    // Color palette: very dark blue-grey tones
+    const cBase   = [22 / 255, 24 / 255, 38 / 255]
+    const cRidge  = [34 / 255, 37 / 255, 58 / 255]
+    const cSulcus = [12 / 255, 12 / 255, 20 / 255]
+
+    let cr: number, cg: number, cb: number
+    if (t > 0.5) {
+      const m = (t - 0.5) / 0.5
+      cr = cBase[0] + (cRidge[0] - cBase[0]) * m
+      cg = cBase[1] + (cRidge[1] - cBase[1]) * m
+      cb = cBase[2] + (cRidge[2] - cBase[2]) * m
     } else {
-      // Fold: blend toward shadow
-      const foldMix = (0.55 - t) / 0.55
-      colors[i * 3] = baseR + (foldR - baseR) * foldMix
-      colors[i * 3 + 1] = baseG + (foldG - baseG) * foldMix
-      colors[i * 3 + 2] = baseB + (foldB - baseB) * foldMix
+      const m = (0.5 - t) / 0.5
+      cr = cBase[0] + (cSulcus[0] - cBase[0]) * m
+      cg = cBase[1] + (cSulcus[1] - cBase[1]) * m
+      cb = cBase[2] + (cSulcus[2] - cBase[2]) * m
     }
+
+    colors[i * 3]     = cr
+    colors[i * 3 + 1] = cg
+    colors[i * 3 + 2] = cb
   }
 
   geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3))
@@ -208,7 +226,7 @@ function createCorticalGeometry(): THREE.BufferGeometry {
 
 export function BrainShell() {
   const meshRef = useRef<THREE.Mesh>(null)
-  const geometry = useMemo(() => createCorticalGeometry(), [])
+  const geometry = useMemo(() => createBrainGeometry(), [])
 
   // Respect prefers-reduced-motion
   const reducedMotion = useRef(false)
@@ -220,28 +238,35 @@ export function BrainShell() {
     return () => mq.removeEventListener('change', handler)
   }, [])
 
-  // Slow counter-clockwise Y-rotation (~0.1 RPM per W4 spec)
-  useFrame((_, delta) => {
+  // Subtle breathing + gentle drift (NO continuous rotation)
+  useFrame((state) => {
     if (meshRef.current && !reducedMotion.current) {
-      meshRef.current.rotation.y -= delta * 0.00087 * 60
+      const t = state.clock.getElapsedTime()
+      // Gentle breathing — barely perceptible scale pulse
+      const breathe = 1.0 + Math.sin(t * 0.4) * 0.005
+      meshRef.current.scale.setScalar(breathe)
+      // Subtle drift/sway — organic, not mechanical
+      meshRef.current.rotation.y = Math.sin(t * 0.12) * 0.025
+      meshRef.current.rotation.x = Math.sin(t * 0.08 + 0.5) * 0.012
     }
   })
 
   return (
-    <mesh ref={meshRef} geometry={geometry}>
+    <mesh ref={meshRef} geometry={geometry} renderOrder={-1}>
       <meshPhysicalMaterial
         vertexColors
-        metalness={0.12}
-        roughness={0.55}
-        transmission={0.25}
-        thickness={1.5}
-        ior={1.45}
+        metalness={0.05}
+        roughness={0.3}
+        transmission={0.6}
+        thickness={0.8}
+        ior={1.3}
         transparent
-        opacity={0.88}
-        envMapIntensity={0.25}
-        clearcoat={0.1}
-        clearcoatRoughness={0.4}
-        side={THREE.DoubleSide}
+        opacity={0.32}
+        envMapIntensity={0.15}
+        clearcoat={0.15}
+        clearcoatRoughness={0.3}
+        side={THREE.FrontSide}
+        depthWrite={false}
       />
     </mesh>
   )

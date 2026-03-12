@@ -6,7 +6,7 @@ import { HeroSection } from '@/components/sections/HeroSection'
 import { ProblemSection } from '@/components/sections/ProblemSection'
 import { SolutionSection } from '@/components/sections/SolutionSection'
 import { ArchitectureSection } from '@/components/sections/ArchitectureSection'
-import { MechanismsSection } from '@/components/sections/MechanismsSection'
+// MechanismsSection removed — content covered by BrainStickySection scroll panels
 import { ComparisonSection } from '@/components/sections/ComparisonSection'
 import { ProofSection } from '@/components/sections/ProofSection'
 import { DeveloperSection } from '@/components/sections/DeveloperSection'
@@ -54,12 +54,14 @@ export default function Home() {
         {/* Sticky brain scroll-lock section — desktop: sticky 3D brain with scroll panels, mobile: stacked cards */}
         <BrainStickySection />
 
-        <MechanismsSection />
+        {/* z-20 ensures post-sticky sections stack above the brain canvas */}
+        <div className="relative z-20">
         <ComparisonSection />
         <ProofSection />
         <DeveloperSection />
         <PricingSection />
         <CTASection />
+        </div>
       </main>
     </>
   )
