@@ -173,7 +173,7 @@ export function BrainExplainerSection() {
       className="relative bg-bg-raised"
       aria-labelledby="capabilities-heading"
     >
-      <div className="max-w-[1200px] mx-auto px-4 md:px-6 py-16 md:py-20 lg:py-24">
+      <div className="max-w-[1200px] mx-auto px-4 md:px-6 pt-28 md:pt-32 lg:pt-36 pb-16 md:pb-20 lg:pb-24">
         <ScrollReveal className="text-center mb-12">
           <span className="text-xs font-medium text-accent-cyan tracking-[0.12em] uppercase">
             THE MEMORY PIPELINE
