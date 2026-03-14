@@ -226,20 +226,21 @@ export function HeroSection() {
         </div>
       </div>
 
-      {/* Trust bar */}
+      {/* Trust bar: stats + logos */}
       <div className="absolute bottom-0 left-0 right-0 z-20">
         <div
-          className="border-t border-b"
           style={{
-            borderColor: 'rgba(255,255,255,0.06)',
+            borderTop: '1px solid rgba(255,255,255,0.06)',
+            borderBottom: '1px solid rgba(255,255,255,0.06)',
             background: 'rgba(9,9,11,0.7)',
             backdropFilter: 'blur(8px)',
             WebkitBackdropFilter: 'blur(8px)',
           }}
         >
           <div className="max-w-[1200px] mx-auto px-4 md:px-6">
+            {/* Stats row */}
             <div
-              className="flex items-center justify-between py-4 gap-6 overflow-x-auto"
+              className="flex items-center justify-between py-3.5 gap-6 overflow-x-auto"
               style={{
                 opacity: loaded ? 1 : 0,
                 transition: 'opacity 800ms ease 600ms',
@@ -269,6 +270,41 @@ export function HeroSection() {
                       style={{ background: 'rgba(255,255,255,0.08)' }}
                     />
                   )}
+                </div>
+              ))}
+            </div>
+
+            {/* Works with logos row */}
+            <div
+              className="flex items-center gap-8 pb-3.5 overflow-x-auto"
+              style={{
+                opacity: loaded ? 1 : 0,
+                transition: 'opacity 800ms ease 800ms',
+                borderTop: '1px solid rgba(255,255,255,0.04)',
+                paddingTop: '12px',
+              }}
+            >
+              <span className="text-[10px] font-mono tracking-[0.12em] text-text-ghost uppercase shrink-0">
+                Works with
+              </span>
+              {[
+                { name: 'OpenAI', icon: '◆' },
+                { name: 'LangChain', icon: '🦜' },
+                { name: 'LangGraph', icon: '◎' },
+                { name: 'CrewAI', icon: '⚙' },
+                { name: 'AutoGen', icon: '▲' },
+                { name: 'OpenClaw', icon: '🦞' },
+              ].map((fw) => (
+                <div
+                  key={fw.name}
+                  className="flex items-center gap-1.5 shrink-0 group cursor-default"
+                >
+                  <span className="text-[14px] opacity-40 group-hover:opacity-70 transition-opacity">
+                    {fw.icon}
+                  </span>
+                  <span className="text-[13px] font-medium text-text-muted group-hover:text-text-secondary transition-colors">
+                    {fw.name}
+                  </span>
                 </div>
               ))}
             </div>
