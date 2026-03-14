@@ -149,13 +149,13 @@ export function Nav() {
             </a>
 
             <a
-              href="https://dashboard.hippocortex.dev/sign-in"
+              href="https://dashboard.hippocortex.dev"
               className="text-sm font-medium text-text-tertiary hover:text-text-primary transition-colors"
             >
               Log in
             </a>
 
-            <Button href="https://dashboard.hippocortex.dev/sign-up" variant="primary" className="text-sm !px-5 !py-2">
+            <Button href="https://dashboard.hippocortex.dev" variant="primary" className="text-sm !px-5 !py-2">
               Get Started
             </Button>
 
