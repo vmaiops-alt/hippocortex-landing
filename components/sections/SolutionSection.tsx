@@ -9,7 +9,7 @@ const solutions = [
     fn: 'capture()',
     tagline: 'Record Everything',
     description:
-      'Messages, tool calls, file edits, commands — every interaction becomes a time-ordered episodic trace with full metadata. Automatic salience scoring filters noise. Dedup prevents redundancy. Zero configuration.',
+      'Messages, tool calls, file edits, commands - every interaction becomes a time-ordered episodic trace with full metadata. Automatic salience scoring filters noise. Dedup prevents redundancy. Zero configuration.',
     color: '#00E5CC',
     glowGradient:
       'linear-gradient(90deg, rgba(0,229,204,0.4) 0%, transparent 100%)',
@@ -18,7 +18,7 @@ const solutions = [
     fn: 'learn()',
     tagline: 'Extract Knowledge',
     description:
-      'The Memory Compiler mines episodes for patterns and promotes them across layers — task schemas from repeated procedures, failure playbooks from errors, causal chains from outcomes, decision policies from preferences. Every artifact backed by source evidence.',
+      'The Memory Compiler mines episodes for patterns and promotes them across layers - task schemas from repeated procedures, failure playbooks from errors, causal chains from outcomes, decision policies from preferences. Every artifact backed by source evidence.',
     color: '#8B5CF6',
     glowGradient:
       'linear-gradient(90deg, rgba(139,92,246,0.4) 0%, transparent 100%)',
@@ -27,7 +27,7 @@ const solutions = [
     fn: 'synthesize()',
     tagline: 'Assemble Context',
     description:
-      'Query all six memory layers simultaneously. Get compressed, provenance-tagged context optimized for your token budget. 60%+ compression over raw retrieval. Deterministic — same inputs, same outputs, every time.',
+      'Query all six memory layers simultaneously. Get compressed, provenance-tagged context optimized for your token budget. 60%+ compression over raw retrieval. Deterministic - same inputs, same outputs, every time.',
     color: '#E8E8F0',
     glowGradient:
       'linear-gradient(90deg, rgba(232,232,240,0.3) 0%, transparent 100%)',

@@ -9,24 +9,24 @@ import { SignalPathways } from './SignalPathways'
 function BrainContent() {
   return (
     <>
-      {/* Lighting — strong key/fill for hemisphere silhouette definition */}
+      {/* Lighting - strong key/fill for hemisphere silhouette definition */}
       <ambientLight intensity={0.12} />
-      {/* Key light — above-right, cool white for top-lit feel */}
+      {/* Key light - above-right, cool white for top-lit feel */}
       <directionalLight position={[3, 4, 5]} intensity={0.6} color="#C8C8D0" />
-      {/* Fill light — opposite side, dim, slight cyan tint */}
+      {/* Fill light - opposite side, dim, slight cyan tint */}
       <directionalLight position={[-4, -1, 3]} intensity={0.15} color="#06B6D4" />
-      {/* Back rim — edge definition from behind */}
+      {/* Back rim - edge definition from behind */}
       <directionalLight position={[0, 2, -4]} intensity={0.35} color="#A0A0B0" />
       {/* Subtle bottom fill for brain stem visibility */}
       <pointLight position={[0, -2, 2]} intensity={0.1} color="#8B5CF6" />
 
-      {/* Brain layers — slight 3/4 angle for better topology readability */}
+      {/* Brain layers - slight 3/4 angle for better topology readability */}
       <group position={[0, 0, 0]} scale={0.65} rotation={[0.10, -0.30, 0]}>
         <BrainShell />
         <SignalPathways />
       </group>
 
-      {/* Post-processing — bloom tuned per W4: threshold 0.6, strength 0.8 */}
+      {/* Post-processing - bloom tuned per W4: threshold 0.6, strength 0.8 */}
       <EffectComposer>
         <Bloom
           intensity={0.8}

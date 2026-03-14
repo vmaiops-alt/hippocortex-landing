@@ -168,7 +168,7 @@ function BrainCoreWithEffects({
     const scene = state.scene
     let mat: THREE.ShaderMaterial | null = null
 
-    // The brain core mesh is inside a group — traverse to find it
+    // The brain core mesh is inside a group - traverse to find it
     scene.traverse((obj) => {
       const mesh = obj as THREE.Mesh
       if (mesh.isMesh && mesh.material && (mesh.material as THREE.ShaderMaterial).uniforms?.uHotspotActive) {
@@ -427,7 +427,7 @@ export function BrainLabScene({ onActiveChange }: BrainLabSceneProps) {
       if (id) {
         pauseAutoCycle()
       } else {
-        // User clicked to deactivate — resume auto-cycle
+        // User clicked to deactivate - resume auto-cycle
         setUserPaused(false)
         if (resumeTimeoutRef.current) clearTimeout(resumeTimeoutRef.current)
       }

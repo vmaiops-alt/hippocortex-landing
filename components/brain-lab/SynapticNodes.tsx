@@ -53,7 +53,7 @@ function sampleSurfacePoints(
     }
   }
 
-  // Extract positions — flush with surface (barely offset, slightly embedded)
+  // Extract positions - flush with surface (barely offset, slightly embedded)
   const outPositions = new Float32Array(selected.length * 3)
   const outBrightness = new Float32Array(selected.length)
 
@@ -80,7 +80,7 @@ function sampleSurfacePoints(
 
 const NODE_COUNT = 280
 
-// Colors for nodes — restrained palette
+// Colors for nodes - restrained palette
 const CYAN   = new THREE.Color('#00E5CC')
 const TEAL   = new THREE.Color('#06B6D4')
 const VIOLET = new THREE.Color('#8B5CF6')
@@ -128,7 +128,7 @@ export function SynapticNodes({ geometry, curvature }: SynapticNodesProps) {
       else if (r < 0.8) color.copy(TEAL)
       else color.copy(VIOLET)
 
-      // Restrained intensity — barely visible, supporting role
+      // Restrained intensity - barely visible, supporting role
       const intensity = brightness * 0.45
       colors[i * 3]     = color.r * intensity
       colors[i * 3 + 1] = color.g * intensity

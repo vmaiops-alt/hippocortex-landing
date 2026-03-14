@@ -24,7 +24,7 @@ const problems = [
     ),
     title: 'Catastrophic Forgetting',
     description:
-      'Your agent solved this exact problem yesterday. Today it starts from scratch — no memory of what worked, what failed, or why decisions were made. Every session is day one.',
+      'Your agent solved this exact problem yesterday. Today it starts from scratch - no memory of what worked, what failed, or why decisions were made. Every session is day one.',
   },
   {
     icon: (
@@ -120,7 +120,7 @@ export function ProblemSection() {
                   <div className="h-1.5 rounded-full bg-accent-cyan/30" style={{ width: '20%' }} />
                   <div className="h-1.5 rounded-full bg-accent-cyan/20" style={{ width: '15%' }} />
                 </div>
-                <div className="mt-3 text-xs text-text-tertiary">Procedures, facts, and provenance — nothing else</div>
+                <div className="mt-3 text-xs text-text-tertiary">Procedures, facts, and provenance - nothing else</div>
               </div>
             </div>
           </div>

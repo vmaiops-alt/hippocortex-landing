@@ -19,7 +19,7 @@ const nodes: NodeData[] = [
     label: 'Capture',
     tagline: 'Ingest every agent event in real time',
     description:
-      'Messages, tool calls, file edits, API responses — every interaction becomes a structured event with metadata, timestamps, and automatic salience scoring. Zero configuration required.',
+      'Messages, tool calls, file edits, API responses - every interaction becomes a structured event with metadata, timestamps, and automatic salience scoring. Zero configuration required.',
     codeSnippet: `memory.capture({
   type: "tool_call",
   agent: "deploy-bot",
@@ -47,7 +47,7 @@ const nodes: NodeData[] = [
     label: 'Compile',
     tagline: 'Deterministic artifact compilation',
     description:
-      'Turns raw patterns into typed artifacts — procedures, failure playbooks, causal chains, decision policies. Deterministic: same inputs produce identical artifacts every time.',
+      'Turns raw patterns into typed artifacts - procedures, failure playbooks, causal chains, decision policies. Deterministic: same inputs produce identical artifacts every time.',
     codeSnippet: `const artifacts = await memory.compile({
   type: "procedure",
   topic: "deployment",

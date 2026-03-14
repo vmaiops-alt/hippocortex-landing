@@ -23,7 +23,7 @@ const features: FeatureCard[] = [
     description:
       'Every agent interaction becomes a time-ordered episodic trace. Session-scoped with cross-session linking. The foundation layer for all higher-order memory.',
     bullets: [
-      'Time-ordered by default — no manual timestamp management',
+      'Time-ordered by default - no manual timestamp management',
       'Session-scoped with cross-session linking',
       'Foundation layer for all higher-order memory',
     ],
@@ -33,7 +33,7 @@ const features: FeatureCard[] = [
     title: 'Semantic Memory',
     subtitle: 'Learned facts and preferences',
     description:
-      'Extracted facts, learned preferences, and documented procedures — promoted from recurring episodic evidence.',
+      'Extracted facts, learned preferences, and documented procedures - promoted from recurring episodic evidence.',
     bullets: [
       'Facts: "Staging deployments require CI check first"',
       'Preferences: "User prefers verbose logging in development"',
@@ -45,7 +45,7 @@ const features: FeatureCard[] = [
     title: 'Graph Memory',
     subtitle: 'Entities and relationships',
     description:
-      'Named entities and typed relationships as a traversable knowledge graph. Relationships are explicit — not buried in vectors.',
+      'Named entities and typed relationships as a traversable knowledge graph. Relationships are explicit - not buried in vectors.',
     bullets: [
       'Named entities with typed relationships',
       'Causal chains: cause → effect, explicitly modeled',
@@ -72,7 +72,7 @@ const features: FeatureCard[] = [
       'Queries all layers simultaneously, scores relevance, compresses aggressively, and assembles a provenance-tagged context packet.',
     bullets: [
       '60%+ compression over raw retrieval',
-      'Token-budget aware — specify your limit, get optimal context',
+      'Token-budget aware - specify your limit, get optimal context',
       'Every fact traceable to source evidence',
     ],
     color: '#E8E8F0',
@@ -155,7 +155,7 @@ export function BrainStickySection() {
 
   return (
     <section className="relative">
-      {/* Brain visualization — contained, centered */}
+      {/* Brain visualization - contained, centered */}
       <div
         className="relative w-full flex items-center justify-center overflow-hidden"
         style={{ height: isMobile ? '300px' : '500px' }}
@@ -163,7 +163,7 @@ export function BrainStickySection() {
         <BrainScene />
       </div>
 
-      {/* Feature cards — clean grid below the brain */}
+      {/* Feature cards - clean grid below the brain */}
       <div className="max-w-5xl mx-auto px-6 pb-20 pt-8">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
           {features.map((f) => (

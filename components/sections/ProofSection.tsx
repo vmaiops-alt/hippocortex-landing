@@ -23,8 +23,8 @@ const metrics: Metric[] = [
 
 const badges = [
   '100 tasks across 10 phases',
-  'APIs frozen — no breaking changes',
-  'GDPR-ready — hard deletion with tombstones',
+  'APIs frozen - no breaking changes',
+  'GDPR-ready - hard deletion with tombstones',
   'Full provenance on every artifact',
 ]
 
@@ -49,7 +49,7 @@ export function ProofSection() {
           </h2>
         </ScrollReveal>
 
-        {/* Metrics — 4-column responsive grid */}
+        {/* Metrics - 4-column responsive grid */}
         <StaggerReveal
           className="mt-8 md:mt-10 lg:mt-12 grid grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-6"
           stagger={150}
@@ -109,7 +109,7 @@ export function ProofSection() {
           <p className="mt-8 text-sm text-text-tertiary text-center max-w-[680px] mx-auto">
             Built across 100 engineering tasks over 10 development phases. Every layer
             independently tested. Every API frozen before release. This isn&apos;t a prototype
-            with a landing page — it&apos;s infrastructure that shipped.
+            with a landing page - it&apos;s infrastructure that shipped.
           </p>
         </ScrollReveal>
       </div>

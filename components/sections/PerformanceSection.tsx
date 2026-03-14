@@ -27,7 +27,7 @@ const capabilities = [
   { label: 'Token-budget optimization', detail: 'Specify your limit, get optimal context.' },
   { label: 'Full provenance tracking', detail: 'Every fact traceable to source evidence.' },
   { label: 'GDPR-ready deletion', detail: 'Hard deletion with tombstones and audit trail.' },
-  { label: 'Idempotent processing', detail: 'Safe retries — no duplicate side effects.' },
+  { label: 'Idempotent processing', detail: 'Safe retries - no duplicate side effects.' },
 ]
 
 export function PerformanceSection() {
@@ -50,7 +50,7 @@ export function PerformanceSection() {
           </h2>
         </ScrollReveal>
 
-        {/* Metrics — 4-column grid */}
+        {/* Metrics - 4-column grid */}
         <StaggerReveal
           className="mt-8 md:mt-10 lg:mt-12 grid grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-6"
           stagger={150}

@@ -29,10 +29,10 @@ void main() {
   vec2 center = vUv - 0.5;
   float dist = length(center);
 
-  // Core dot — bright center
+  // Core dot - bright center
   float core = smoothstep(0.18, 0.04, dist);
 
-  // Ring — visible at idle
+  // Ring - visible at idle
   float ring = smoothstep(0.34, 0.28, dist) - smoothstep(0.28, 0.20, dist);
 
   // Idle breathing pulse
@@ -43,7 +43,7 @@ void main() {
   float activePulse = sin(uTime * 4.0) * 0.5 + 0.5;
   float hoverPulse = mix(idlePulse, 1.0 + activePulse * 0.2, max(uHover, uActive));
 
-  // Outer glow — more visible
+  // Outer glow - more visible
   float glow = exp(-6.0 * dist) * 0.6;
 
   float intensity = (core * 1.2 + ring * 0.5 + glow * 0.7) * hoverPulse;
@@ -147,7 +147,7 @@ function HotspotPoint({
 
   return (
     <group position={offsetPos}>
-      {/* Invisible hit area — larger sphere for easier interaction */}
+      {/* Invisible hit area - larger sphere for easier interaction */}
       <mesh
         onPointerOver={(e) => {
           e.stopPropagation()

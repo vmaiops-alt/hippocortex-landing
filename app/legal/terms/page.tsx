@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
-  title: 'Terms of Service — Hippocortex',
+  title: 'Terms of Service - Hippocortex',
   description: 'Terms of Service for the Hippocortex platform and services.',
 }
 

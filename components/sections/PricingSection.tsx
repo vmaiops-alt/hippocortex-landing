@@ -104,7 +104,7 @@ export function PricingSection() {
             Start Free. Scale When Ready.
           </h2>
           <p className="mt-4 text-[17px] max-md:text-base text-text-secondary max-w-[680px] mx-auto">
-            No credit card required. Free tier is real — not a 7-day trial.
+            No credit card required. Free tier is real - not a 7-day trial.
             Upgrade when your agents need more memory.
           </p>
         </ScrollReveal>

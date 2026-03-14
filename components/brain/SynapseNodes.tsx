@@ -5,7 +5,7 @@ import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
 import { useBrainStore, BrainState } from '@/lib/store'
 
-const NODE_COUNT = 100  // Reduced from 160 — cleaner scene, less visual noise
+const NODE_COUNT = 100  // Reduced from 160 - cleaner scene, less visual noise
 const BRAIN_RADIUS = 1.05  // Fit inside the brain ellipsoid (smallest semi-axis ~0.88)
 
 // Seeded random for deterministic node positions
@@ -71,7 +71,7 @@ export function SynapseNodes() {
   const meshRef = useRef<THREE.InstancedMesh>(null)
   const { positions, regionIds } = useMemo(() => generateNodes(), [])
 
-  // Reusable objects — allocated once, never in the frame loop
+  // Reusable objects - allocated once, never in the frame loop
   const dummy = useMemo(() => new THREE.Object3D(), [])
   const colorsRef = useRef(new Float32Array(NODE_COUNT * 3))
   const opacitiesRef = useRef(new Float32Array(NODE_COUNT).fill(0.15))
@@ -84,7 +84,7 @@ export function SynapseNodes() {
   // Store original positions for compression lerp
   const originalPositions = useRef(new Float32Array(positions))
 
-  // Track brain state via ref — with proper cleanup
+  // Track brain state via ref - with proper cleanup
   const stateRef = useRef<BrainState>('IDLE')
   useEffect(() => {
     const unsubscribe = useBrainStore.subscribe((s) => {
@@ -156,7 +156,7 @@ export function SynapseNodes() {
       if (isSynthesis) {
         // ── COMPRESSION SEQUENCE (per W4 §4.4) ──
         if (synthElapsed < 2.0) {
-          // Phase 1: Signal activity rise — synthesizer brightens, others dim
+          // Phase 1: Signal activity rise - synthesizer brightens, others dim
           const ramp = Math.min(synthElapsed / 2.0, 1.0)
           if (isSynthRegion) {
             targetOpacity = 0.3 + ramp * 0.7
@@ -164,14 +164,14 @@ export function SynapseNodes() {
             targetOpacity = 0.15 - ramp * 0.10
           }
         } else if (synthElapsed < 2.5) {
-          // Phase 2: Node dimming — all except synthesizer cluster fade
+          // Phase 2: Node dimming - all except synthesizer cluster fade
           if (isSynthRegion) {
             targetOpacity = 1.0
           } else {
             targetOpacity = 0.02
           }
         } else if (synthElapsed < 3.3) {
-          // Phase 3: Compression snap — synthesizer nodes converge to center
+          // Phase 3: Compression snap - synthesizer nodes converge to center
           const snapProgress = Math.min((synthElapsed - 2.5) / 0.8, 1.0)
           // Dramatic easing per W4: fast start, sharp decel
           const eased = 1.0 - Math.pow(1.0 - snapProgress, 3)
@@ -197,7 +197,7 @@ export function SynapseNodes() {
             targetOpacity = 0.02
           }
         } else {
-          // Phase 5: Hold — ease back to modest glow
+          // Phase 5: Hold - ease back to modest glow
           if (isSynthRegion) {
             const holdProgress = Math.min((synthElapsed - 3.9) / 0.4, 1.0)
             x = SYNTH_CENTER.x + (origX - SYNTH_CENTER.x) * holdProgress * 0.3
@@ -212,7 +212,7 @@ export function SynapseNodes() {
       } else {
         // ── NORMAL STATE BEHAVIOR (per W4 §2.2) ──
         if (state === 'IDLE' || state === 'DORMANT') {
-          // Idle: dim, barely visible — synapse sparks, not bubbles
+          // Idle: dim, barely visible - synapse sparks, not bubbles
           targetOpacity = 0.15
         } else if (isActive) {
           // Active region: moderate brightness (burst will push higher)
@@ -222,7 +222,7 @@ export function SynapseNodes() {
           targetOpacity = 0.08
         }
 
-        // Idle burst effect — small cluster of 3-5 nodes every 3-5s
+        // Idle burst effect - small cluster of 3-5 nodes every 3-5s
         if (state === 'IDLE' && burstTimerRef.current > 3.5) {
           if (burstRng.current() < 0.04) {
             targetOpacity = 1.0
@@ -241,7 +241,7 @@ export function SynapseNodes() {
 
       dummy.position.set(x, y, z)
       // Node size: idle ~0.012 (tiny spark), burst ~0.025 (small flash)
-      // Reduced to ~30% of original — nodes are secondary to signals
+      // Reduced to ~30% of original - nodes are secondary to signals
       const baseScale = 0.012 + opacitiesRef.current[i] * 0.013
       dummy.scale.setScalar(baseScale * extraScale)
       dummy.updateMatrix()
@@ -249,8 +249,8 @@ export function SynapseNodes() {
 
       const regionColor = REGION_COLORS[regionIds[i]]
       // HDR glow: idle barely visible, only bursts trigger bloom (>0.6 threshold)
-      // At idle (0.15 opacity): intensity = 0.15 * 1.2 = 0.18 — below bloom threshold
-      // At burst (1.0 opacity): intensity = 1.0 * 1.2 = 1.2 — triggers bloom
+      // At idle (0.15 opacity): intensity = 0.15 * 1.2 = 0.18 - below bloom threshold
+      // At burst (1.0 opacity): intensity = 1.0 * 1.2 = 1.2 - triggers bloom
       const intensity = opacitiesRef.current[i] * 1.2
       colorsRef.current[i * 3] = regionColor.r * intensity
       colorsRef.current[i * 3 + 1] = regionColor.g * intensity

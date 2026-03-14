@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
-  title: 'Data Processing Agreement — Hippocortex',
+  title: 'Data Processing Agreement - Hippocortex',
   description: 'Data Processing Agreement for the Hippocortex platform.',
 }
 

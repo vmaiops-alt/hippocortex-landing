@@ -16,7 +16,7 @@ const mechanisms = [
     ),
     title: 'Memories That Self-Correct',
     description:
-      'New evidence conflicts with existing knowledge? Hippocortex detects the contradiction, quarantines the conflicting entries, and resolves based on recency, frequency, and provenance strength. Your agent never operates on stale facts — it knows which version of the truth to trust.',
+      'New evidence conflicts with existing knowledge? Hippocortex detects the contradiction, quarantines the conflicting entries, and resolves based on recency, frequency, and provenance strength. Your agent never operates on stale facts - it knows which version of the truth to trust.',
     accentColor: '#F43F5E',
   },
   {
@@ -31,7 +31,7 @@ const mechanisms = [
     ),
     title: 'Every Fact Has Receipts',
     description:
-      'Every semantic fact, every graph relationship, every compiled playbook — traceable to the original episodic evidence that created it. Not just timestamps. Structural provenance across all six layers. Audit any piece of knowledge back to the interaction that produced it.',
+      'Every semantic fact, every graph relationship, every compiled playbook - traceable to the original episodic evidence that created it. Not just timestamps. Structural provenance across all six layers. Audit any piece of knowledge back to the interaction that produced it.',
     accentColor: '#06B6D4',
   },
   {
@@ -44,7 +44,7 @@ const mechanisms = [
     ),
     title: 'Episodes Become Expertise',
     description:
-      "Raw episodes alone aren't useful at scale. The Memory Compiler promotes patterns into reusable knowledge artifacts: task schemas from repeated procedures, failure playbooks from error patterns, causal chains from outcomes, decision policies from preferences. Your agent doesn't just remember — it develops expertise.",
+      "Raw episodes alone aren't useful at scale. The Memory Compiler promotes patterns into reusable knowledge artifacts: task schemas from repeated procedures, failure playbooks from error patterns, causal chains from outcomes, decision policies from preferences. Your agent doesn't just remember - it develops expertise.",
     accentColor: '#8B5CF6',
   },
   {
@@ -59,7 +59,7 @@ const mechanisms = [
     ),
     title: 'Same Inputs. Same Outputs. Every Time.',
     description:
-      'Zero LLM calls internally. Every operation — salience scoring, dedup, pattern mining, contradiction detection, context synthesis — runs on deterministic algorithms. Verifiable. Testable. Reproducible. No probabilistic surprises in your memory layer.',
+      'Zero LLM calls internally. Every operation - salience scoring, dedup, pattern mining, contradiction detection, context synthesis - runs on deterministic algorithms. Verifiable. Testable. Reproducible. No probabilistic surprises in your memory layer.',
     accentColor: '#00E5CC',
   },
 ]

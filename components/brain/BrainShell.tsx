@@ -114,17 +114,17 @@ function fbm3(x: number, y: number, z: number, octaves: number, lacunarity: numb
 
 // ── Brain Geometry ─────────────────────────────────────────────────
 function createBrainGeometry(): THREE.BufferGeometry {
-  // Subdivision 5 = ~20K faces / ~40K tris — within W4 performance budget
-  // (was 7 = 327K tris — way over budget)
+  // Subdivision 5 = ~20K faces / ~40K tris - within W4 performance budget
+  // (was 7 = 327K tris - way over budget)
   const geometry = new THREE.IcosahedronGeometry(1, 5)
   const positions = geometry.attributes.position
   const count = positions.count
   const colors = new Float32Array(count * 3)
 
   // Brain ellipsoid semi-axes (wider than tall, slightly elongated front-to-back)
-  const semiX = 1.22  // width — widest dimension
-  const semiY = 0.88  // height — shorter
-  const semiZ = 1.04  // depth — slightly elongated
+  const semiX = 1.22  // width - widest dimension
+  const semiY = 0.88  // height - shorter
+  const semiZ = 1.04  // depth - slightly elongated
 
   for (let i = 0; i < count; i++) {
     const ox = positions.getX(i)
@@ -144,7 +144,7 @@ function createBrainGeometry(): THREE.BufferGeometry {
       (dz * dz) / (semiZ * semiZ)
     )
 
-    // 2. Longitudinal fissure — central groove at x≈0, dorsal surface (y>0)
+    // 2. Longitudinal fissure - central groove at x≈0, dorsal surface (y>0)
     //    Runs anterior-posterior (along z-axis), deepest at crown
     const px = dx * r  // approximate x position
     const py = dy * r  // approximate y position
@@ -154,7 +154,7 @@ function createBrainGeometry(): THREE.BufferGeometry {
     const fissureDepth = 0.20
     r -= fissureGaussian * topWeight * fissureDepth
 
-    // 3. Lateral sulcus hint (Sylvian fissure) — groove on each side
+    // 3. Lateral sulcus hint (Sylvian fissure) - groove on each side
     const absX = Math.abs(dx * r)
     const sylvianZone = Math.exp(-((absX - 0.8) * (absX - 0.8)) / 0.04)
     const sylvianY = Math.exp(-((py + 0.1) * (py + 0.1)) / 0.06)
@@ -164,11 +164,11 @@ function createBrainGeometry(): THREE.BufferGeometry {
     const lowSide = Math.max(0, -dy - 0.15) * Math.abs(dx)
     r += lowSide * 0.10
 
-    // 5. Frontal pole — slight forward prominence
+    // 5. Frontal pole - slight forward prominence
     const frontal = Math.max(0, dz - 0.3) * Math.max(0, dy + 0.3)
     r += frontal * 0.05
 
-    // 6. Occipital bump — back of head, slightly lower
+    // 6. Occipital bump - back of head, slightly lower
     const occipital = Math.max(0, -dz - 0.5) * Math.max(0, -dy + 0.2)
     r += occipital * 0.035
 
@@ -176,7 +176,7 @@ function createBrainGeometry(): THREE.BufferGeometry {
     const bottom = Math.max(0, -dy - 0.55)
     r -= bottom * 0.20
 
-    // 8. Cortical folds — anisotropic noise for elongated gyri/sulci
+    // 8. Cortical folds - anisotropic noise for elongated gyri/sulci
     //    Higher lateral frequency → more grooves perpendicular to midline
     //    Lower AP frequency → folds run primarily front-to-back (longitudinal)
     const fx = dx * r * 3.2
@@ -194,14 +194,14 @@ function createBrainGeometry(): THREE.BufferGeometry {
     // Set final vertex position
     positions.setXYZ(i, dx * r, dy * r, dz * r)
 
-    // ── Vertex colors: sulci darker, gyri lighter — wider contrast range ──
+    // ── Vertex colors: sulci darker, gyri lighter - wider contrast range ──
     const foldDepth = fold1 / 0.060
     const t = foldDepth * 0.5 + 0.5
 
     // Color palette: dark graphite with visible contrast between folds
     // W4 spec base: #1A1A24 = (26, 26, 36)
     const cBase   = [26 / 255, 26 / 255, 36 / 255]
-    const cRidge  = [52 / 255, 55 / 255, 78 / 255]  // brighter ridges — visible folds
+    const cRidge  = [52 / 255, 55 / 255, 78 / 255]  // brighter ridges - visible folds
     const cSulcus = [10 / 255, 10 / 255, 16 / 255]   // deeper sulci
 
     let cr: number, cg: number, cb: number

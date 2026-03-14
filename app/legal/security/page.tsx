@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
-  title: 'Security Policy — Hippocortex',
+  title: 'Security Policy - Hippocortex',
   description: 'Security practices and policies for the Hippocortex platform.',
 }
 
@@ -41,7 +41,7 @@ export default function SecurityPolicyPage() {
         <p className="text-text-secondary leading-relaxed">
           Complete logical isolation between tenants at the database, cache, and application layers.
           Every API request is authenticated and scoped to the requesting tenant. Cross-tenant data
-          access is architecturally impossible — isolation is enforced at the query level, not just
+          access is architecturally impossible - isolation is enforced at the query level, not just
           application logic.
         </p>
       </section>

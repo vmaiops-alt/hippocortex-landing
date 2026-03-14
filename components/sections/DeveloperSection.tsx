@@ -130,7 +130,7 @@ export function DeveloperSection() {
           </h2>
           <p className="mt-4 text-[17px] max-md:text-base text-text-secondary max-w-[680px] mx-auto">
             Install the SDK. Add three function calls. Your agent has persistent memory
-            that learns from every session. Works with any framework — no rewrites required.
+            that learns from every session. Works with any framework - no rewrites required.
           </p>
         </ScrollReveal>
 
@@ -214,7 +214,7 @@ export function DeveloperSection() {
         {/* CTAs */}
         <ScrollReveal delay={300} className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
           <Button href="https://dashboard.hippocortex.dev" variant="primary">
-            Get Started — Free
+            Get Started - Free
           </Button>
           <Button href="https://docs.hippocortex.dev/api" variant="text" external>
             Full SDK Reference →

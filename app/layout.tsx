@@ -18,11 +18,11 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Hippocortex — Memory for AI Agents",
+  title: "Hippocortex - Memory for AI Agents",
   description:
     "Deterministic memory layer that captures what your agents do, compiles patterns into reusable knowledge, and synthesizes context within token budgets.",
   openGraph: {
-    title: "Hippocortex — AI Agents That Learn From Experience",
+    title: "Hippocortex - AI Agents That Learn From Experience",
     description:
       "Three API calls. Zero LLM dependencies. Full provenance on every fact.",
     type: "website",

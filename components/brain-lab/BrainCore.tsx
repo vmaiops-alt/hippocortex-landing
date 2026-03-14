@@ -75,7 +75,7 @@ void main() {
   vec3 V = normalize(vViewPosition);
   float NdotV = max(dot(N, V), 0.0);
 
-  // ─── Fresnel — very subtle silhouette edge ───
+  // ─── Fresnel - very subtle silhouette edge ───
   float fresnel = pow(1.0 - NdotV, 4.5);
 
   // ─── Sculptural lighting (baked, no scene lights) ───
@@ -114,7 +114,7 @@ void main() {
   baseColor += vec3(0.25, 0.27, 0.35) * edgeCatch;
 
   // ═══════════════════════════════════════════════════════════════
-  // SIGNAL HIERARCHY — trunk → branches → capillaries
+  // SIGNAL HIERARCHY - trunk → branches → capillaries
   // ═══════════════════════════════════════════════════════════════
 
   float ridge = smoothstep(0.05, 0.35, vCurvature);
@@ -194,7 +194,7 @@ void main() {
   float travelingSignal = max(max(pulse1, pulse2), pulse3);
 
   // ═══════════════════════════════════════════════════════════════
-  // HOTSPOT CONVERGENCE — signal converging toward active hotspot
+  // HOTSPOT CONVERGENCE - signal converging toward active hotspot
   // ═══════════════════════════════════════════════════════════════
 
   float hotspotSignal = 0.0;
@@ -229,7 +229,7 @@ void main() {
   if (uCursorActive > 0.01) {
     float distToCursor = length(vWorldPosition - uCursorPos);
 
-    // Soft local glow around cursor position — radius ~0.2
+    // Soft local glow around cursor position - radius ~0.2
     float proximity = exp(-12.0 * distToCursor * distToCursor);
     cursorGlow = proximity * ridge * pathMask * 0.4 * uCursorActive;
 

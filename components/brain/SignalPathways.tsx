@@ -125,7 +125,7 @@ export function SignalPathways() {
   )
   const pulseTimerRef = useRef(0)
 
-  // Track state via ref — with proper cleanup
+  // Track state via ref - with proper cleanup
   const stateRef = useRef<BrainState>('IDLE')
   useEffect(() => {
     const unsubscribe = useBrainStore.subscribe((s) => {
@@ -154,7 +154,7 @@ export function SignalPathways() {
     return () => mq.removeEventListener('change', handler)
   }, [])
 
-  // Materials for pathways — stable refs
+  // Materials for pathways - stable refs
   // Signals are the VISUAL HERO (W4 §2): use HDR emissive output + toneMapped:false
   const materialsRef = useRef(
     pathways.map((p) => {
@@ -255,11 +255,11 @@ export function SignalPathways() {
           targetOpacity = 0.06
         }
       } else if (state === 'IDLE' || state === 'DORMANT') {
-        targetOpacity = 0.12  // dormant — barely visible tracery
+        targetOpacity = 0.12  // dormant - barely visible tracery
       } else if (isRelevant) {
-        targetOpacity = 0.35  // active region — clear but not overwhelming
+        targetOpacity = 0.35  // active region - clear but not overwhelming
       } else {
-        targetOpacity = 0.06  // inactive — nearly invisible
+        targetOpacity = 0.06  // inactive - nearly invisible
       }
 
       mat.opacity += (targetOpacity - mat.opacity) * delta * 3
@@ -308,7 +308,7 @@ export function SignalPathways() {
       }
     }
 
-    // Update active pulses — SIGNALS ARE THE VISUAL HERO
+    // Update active pulses - SIGNALS ARE THE VISUAL HERO
     // Since we use per-tube materials (not per-vertex shaders), the entire tube
     // glows when a pulse travels through it. We shape brightness as an envelope:
     // ramp up → sustained peak → ramp down, with a trailing afterglow.

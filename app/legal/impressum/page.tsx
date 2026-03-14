@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
-  title: 'Impressum — Hippocortex',
+  title: 'Impressum - Hippocortex',
   description: 'Impressum (Legal Notice) for Hippocortex, as required by German law.',
 }
 
