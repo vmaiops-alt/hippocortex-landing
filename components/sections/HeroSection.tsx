@@ -276,7 +276,7 @@ export function HeroSection() {
 
             {/* Works with logos row */}
             <div
-              className="flex items-center gap-8 pb-3.5 overflow-x-auto"
+              className="flex flex-col items-center pb-3.5"
               style={{
                 opacity: loaded ? 1 : 0,
                 transition: 'opacity 800ms ease 800ms',
@@ -284,29 +284,36 @@ export function HeroSection() {
                 paddingTop: '12px',
               }}
             >
-              <span className="text-[10px] font-mono tracking-[0.12em] text-text-ghost uppercase shrink-0">
+              <span className="text-[10px] font-mono tracking-[0.15em] text-text-ghost uppercase mb-3">
                 Works with
               </span>
-              {[
-                { name: 'OpenAI', icon: '◆' },
-                { name: 'LangChain', icon: '🦜' },
-                { name: 'LangGraph', icon: '◎' },
-                { name: 'CrewAI', icon: '⚙' },
-                { name: 'AutoGen', icon: '▲' },
-                { name: 'OpenClaw', icon: '🦞' },
-              ].map((fw) => (
-                <div
-                  key={fw.name}
-                  className="flex items-center gap-1.5 shrink-0 group cursor-default"
-                >
-                  <span className="text-[14px] opacity-40 group-hover:opacity-70 transition-opacity">
-                    {fw.icon}
-                  </span>
-                  <span className="text-[13px] font-medium text-text-muted group-hover:text-text-secondary transition-colors">
-                    {fw.name}
-                  </span>
-                </div>
-              ))}
+              <div className="flex items-center justify-center gap-0">
+                {[
+                  { name: 'OpenAI', icon: '◆' },
+                  { name: 'LangChain', icon: '🦜' },
+                  { name: 'LangGraph', icon: '◎' },
+                  { name: 'CrewAI', icon: '⚙' },
+                  { name: 'AutoGen', icon: '▲' },
+                  { name: 'OpenClaw', icon: '🦞' },
+                ].map((fw, i) => (
+                  <div key={fw.name} className="flex items-center">
+                    <div className="flex items-center gap-1.5 px-4 group cursor-default">
+                      <span className="text-[14px] opacity-40 group-hover:opacity-70 transition-opacity">
+                        {fw.icon}
+                      </span>
+                      <span className="text-[13px] font-medium text-text-muted group-hover:text-text-secondary transition-colors">
+                        {fw.name}
+                      </span>
+                    </div>
+                    {i < 5 && (
+                      <div
+                        className="w-px h-4"
+                        style={{ background: 'rgba(255,255,255,0.1)' }}
+                      />
+                    )}
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         </div>
