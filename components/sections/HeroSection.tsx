@@ -50,7 +50,7 @@ export function HeroSection() {
     <section
       id="hero"
       ref={sectionRef}
-      className="relative min-h-screen flex items-center overflow-hidden pb-[140px]"
+      className="relative min-h-screen flex items-center overflow-hidden pb-[100px]"
       aria-labelledby="hero-heading"
     >
       {/* Background glow */}
