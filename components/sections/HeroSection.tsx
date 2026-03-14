@@ -178,7 +178,7 @@ export function HeroSection() {
                 transition: 'opacity 500ms cubic-bezier(0.16, 1, 0.3, 1) 550ms, transform 500ms cubic-bezier(0.16, 1, 0.3, 1) 550ms',
               }}
             >
-              <Button href="https://dashboard.hippocortex.dev" variant="primary">
+              <Button href="https://dashboard.hippocortex.dev/signup" variant="primary">
                 Get Started - Free
               </Button>
               <Button href="https://docs.hippocortex.dev" variant="ghost" external>

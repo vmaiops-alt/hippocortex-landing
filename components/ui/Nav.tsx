@@ -155,7 +155,7 @@ export function Nav() {
               Log in
             </a>
 
-            <Button href="https://dashboard.hippocortex.dev" variant="primary" className="text-sm !px-5 !py-2">
+            <Button href="https://dashboard.hippocortex.dev/signup" variant="primary" className="text-sm !px-5 !py-2">
               Get Started
             </Button>
 

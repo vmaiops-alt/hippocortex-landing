@@ -68,7 +68,7 @@ export function CTASection() {
 
             <ScrollReveal delay={400}>
               <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4">
-                <Button href="https://dashboard.hippocortex.dev" variant="primary" size="large">
+                <Button href="https://dashboard.hippocortex.dev/signup" variant="primary" size="large">
                   Get Started - Free
                 </Button>
                 <Button href="https://docs.hippocortex.dev" variant="ghost" external>
