@@ -255,11 +255,11 @@ export function BrainShell() {
         vertexColors
         metalness={0.15}
         roughness={0.6}
-        transmission={0.3}
-        thickness={1.5}
-        ior={1.45}
+        transmission={0.55}
+        thickness={1.0}
+        ior={1.5}
         transparent
-        opacity={0.85}
+        opacity={0.45}
         envMapIntensity={0.3}
         clearcoat={0.2}
         clearcoatRoughness={0.4}

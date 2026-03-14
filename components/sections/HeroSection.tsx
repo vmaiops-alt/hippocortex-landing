@@ -1,22 +1,44 @@
 'use client'
 
-import { useRef, useState, useEffect } from 'react'
+import { useRef, useState, useEffect, useCallback } from 'react'
+import dynamic from 'next/dynamic'
 import { Button } from '@/components/ui/Button'
+import { HOTSPOTS } from '@/components/brain-lab/hotspotData'
+
+const BrainLabScene = dynamic(
+  () => import('@/components/brain-lab/BrainLabScene').then(mod => ({ default: mod.BrainLabScene })),
+  { ssr: false }
+)
 
 export function HeroSection() {
   const [copied, setCopied] = useState(false)
   const [loaded, setLoaded] = useState(false)
+  const [activeHotspotId, setActiveHotspotId] = useState<string | null>(null)
+  const [isLargeScreen, setIsLargeScreen] = useState(true)
   const sectionRef = useRef<HTMLElement>(null)
 
   useEffect(() => {
-    // Check reduced motion
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
       setLoaded(true)
       return
     }
-    // Small delay to ensure paint has happened
     requestAnimationFrame(() => setLoaded(true))
   }, [])
+
+  useEffect(() => {
+    const check = () => setIsLargeScreen(window.innerWidth >= 1024)
+    check()
+    window.addEventListener('resize', check)
+    return () => window.removeEventListener('resize', check)
+  }, [])
+
+  const handleActiveChange = useCallback((id: string | null) => {
+    setActiveHotspotId(id)
+  }, [])
+
+  const activeDatum = activeHotspotId
+    ? HOTSPOTS.find(h => h.id === activeHotspotId) ?? null
+    : null
 
   const handleCopy = () => {
     navigator.clipboard.writeText('npm install @hippocortex/sdk')
@@ -44,7 +66,7 @@ export function HeroSection() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
           {/* Text content — left 5 cols */}
           <div className="lg:col-span-5 pt-16 md:pt-0">
-            {/* Headline — staggered entrance */}
+            {/* Headline */}
             <h1
               id="hero-heading"
               className="text-[32px] md:text-[44px] lg:text-[56px] font-bold text-text-primary leading-[1.08] tracking-[-0.025em] max-w-[560px]"
@@ -54,7 +76,7 @@ export function HeroSection() {
                 transition: 'opacity 800ms cubic-bezier(0.08, 0.82, 0.17, 1), transform 800ms cubic-bezier(0.08, 0.82, 0.17, 1)',
               }}
             >
-              AI Agents That Learn From Experience
+              Memory infrastructure for AI agents
             </h1>
 
             {/* Subheadline */}
@@ -66,9 +88,7 @@ export function HeroSection() {
                 transition: 'opacity 700ms cubic-bezier(0.16, 1, 0.3, 1) 150ms, transform 700ms cubic-bezier(0.16, 1, 0.3, 1) 150ms',
               }}
             >
-              Hippocortex is a deterministic memory layer that captures what your agents do,
-              compiles patterns into reusable knowledge, and synthesizes context within token
-              budgets. Three API calls. Zero LLM dependencies. Full provenance on every fact.
+              Capture events → compile knowledge → return compressed reasoning context.
             </p>
 
             {/* Install command */}
@@ -98,16 +118,67 @@ export function HeroSection() {
               )}
             </div>
 
+            {/* Code example */}
+            <div
+              className="mt-5 bg-bg-void border border-border-subtle rounded-xl p-4 overflow-x-auto"
+              style={{
+                opacity: loaded ? 1 : 0,
+                transform: loaded ? 'translateY(0)' : 'translateY(12px)',
+                transition: 'opacity 500ms cubic-bezier(0.16, 1, 0.3, 1) 450ms, transform 500ms cubic-bezier(0.16, 1, 0.3, 1) 450ms',
+              }}
+            >
+              <pre className="text-[13px] font-mono leading-[1.65] text-text-secondary">
+                <code>
+                  <span className="code-keyword">import</span>{' '}
+                  <span className="text-text-primary">{'{ AgentMemory }'}</span>{' '}
+                  <span className="code-keyword">from</span>{' '}
+                  <span className="code-string">&quot;@hippocortex/sdk&quot;</span>
+                  {'\n\n'}
+                  <span className="code-keyword">const</span>{' '}
+                  <span className="text-text-primary">memory</span>{' '}
+                  <span className="code-operator">=</span>{' '}
+                  <span className="code-keyword">new</span>{' '}
+                  <span className="code-type">AgentMemory</span>
+                  <span className="code-punctuation">()</span>
+                  {'\n'}
+                  <span className="text-text-primary">memory</span>
+                  <span className="code-punctuation">.</span>
+                  <span className="code-function">capture</span>
+                  <span className="code-punctuation">(</span>
+                  <span className="text-text-primary">event</span>
+                  <span className="code-punctuation">)</span>
+                  {'\n'}
+                  <span className="code-keyword">const</span>{' '}
+                  <span className="text-text-primary">context</span>{' '}
+                  <span className="code-operator">=</span>{' '}
+                  <span className="code-keyword">await</span>{' '}
+                  <span className="text-text-primary">memory</span>
+                  <span className="code-punctuation">.</span>
+                  <span className="code-function">synthesize</span>
+                  <span className="code-punctuation">(</span>
+                  <span className="text-text-primary">query</span>
+                  <span className="code-punctuation">)</span>
+                  {'\n'}
+                  <span className="text-text-primary">agent</span>
+                  <span className="code-punctuation">.</span>
+                  <span className="code-function">run</span>
+                  <span className="code-punctuation">(</span>
+                  <span className="text-text-primary">context</span>
+                  <span className="code-punctuation">)</span>
+                </code>
+              </pre>
+            </div>
+
             {/* CTAs */}
             <div
               className="mt-8 flex flex-col sm:flex-row gap-3 sm:gap-4"
               style={{
                 opacity: loaded ? 1 : 0,
                 transform: loaded ? 'translateY(0)' : 'translateY(12px)',
-                transition: 'opacity 500ms cubic-bezier(0.16, 1, 0.3, 1) 500ms, transform 500ms cubic-bezier(0.16, 1, 0.3, 1) 500ms',
+                transition: 'opacity 500ms cubic-bezier(0.16, 1, 0.3, 1) 550ms, transform 500ms cubic-bezier(0.16, 1, 0.3, 1) 550ms',
               }}
             >
-              <Button href="#start" variant="primary">
+              <Button href="https://dashboard.hippocortex.dev" variant="primary">
                 Get Started — Free
               </Button>
               <Button href="https://docs.hippocortex.dev" variant="ghost" external>
@@ -116,8 +187,42 @@ export function HeroSection() {
             </div>
           </div>
 
-          {/* Right column spacer — brain lives in the sticky section below */}
-          <div className="hidden lg:block lg:col-span-7" aria-hidden="true" />
+          {/* Right column — brain visualization */}
+          <div
+            className="lg:col-span-7 relative"
+            style={{
+              opacity: loaded ? 1 : 0,
+              transform: loaded ? 'translateX(0)' : 'translateX(40px)',
+              transition: 'opacity 900ms cubic-bezier(0.08, 0.82, 0.17, 1) 300ms, transform 900ms cubic-bezier(0.08, 0.82, 0.17, 1) 300ms',
+            }}
+          >
+            <div className="w-full h-[420px] sm:h-[500px] lg:h-[640px] relative">
+              <BrainLabScene onActiveChange={handleActiveChange} />
+            </div>
+
+            {/* Mobile: hotspot info strip below brain */}
+            {!isLargeScreen && (
+              <div className="mt-2 flex items-center justify-center text-center px-4 min-h-[56px]">
+                <div
+                  className="transition-all duration-300 ease-out"
+                  style={{
+                    opacity: activeDatum ? 1 : 0,
+                    transform: activeDatum ? 'translateY(0)' : 'translateY(4px)',
+                  }}
+                >
+                  <div
+                    className="text-[10px] font-mono tracking-[0.15em]"
+                    style={{ color: '#FFD700' }}
+                  >
+                    {activeDatum?.label.toUpperCase()}
+                  </div>
+                  <div className="text-[13px] text-text-secondary mt-0.5 leading-snug max-w-[320px] mx-auto">
+                    {activeDatum?.tagline}
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
         </div>
       </div>
 

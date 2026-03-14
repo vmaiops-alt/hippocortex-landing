@@ -1,22 +1,18 @@
 'use client'
 
-import dynamic from 'next/dynamic'
 import { Nav } from '@/components/ui/Nav'
 import { HeroSection } from '@/components/sections/HeroSection'
+import { BrainExplainerSection } from '@/components/sections/BrainExplainerSection'
 import { ProblemSection } from '@/components/sections/ProblemSection'
-import { SolutionSection } from '@/components/sections/SolutionSection'
+import { SystemDiagramSection } from '@/components/sections/SystemDiagramSection'
 import { ArchitectureSection } from '@/components/sections/ArchitectureSection'
+import { CodeIntegrationsSection } from '@/components/sections/CodeIntegrationsSection'
+import { PerformanceSection } from '@/components/sections/PerformanceSection'
+import { SecuritySection } from '@/components/sections/SecuritySection'
 import { ComparisonSection } from '@/components/sections/ComparisonSection'
-import { ProofSection } from '@/components/sections/ProofSection'
-import { DeveloperSection } from '@/components/sections/DeveloperSection'
 import { PricingSection } from '@/components/sections/PricingSection'
+import { DocumentationSection } from '@/components/sections/DocumentationSection'
 import { CTASection } from '@/components/sections/CTASection'
-
-// Dynamic import for brain sticky section (client-only, no SSR)
-const BrainStickySection = dynamic(
-  () => import('@/components/brain/BrainStickySection').then(mod => ({ default: mod.BrainStickySection })),
-  { ssr: false }
-)
 
 export default function Home() {
   return (
@@ -33,21 +29,17 @@ export default function Home() {
 
       <main>
         <HeroSection />
+        <BrainExplainerSection />
         <ProblemSection />
-        <SolutionSection />
-
-        {/* Architecture header → brain sticky section → rest of page */}
+        <SystemDiagramSection />
         <ArchitectureSection />
-        <BrainStickySection />
-
-        {/* z-20 + bg ensures post-sticky sections fully cover the brain canvas */}
-        <div className="relative z-20 bg-bg-base">
-          <ComparisonSection />
-          <ProofSection />
-          <DeveloperSection />
-          <PricingSection />
-          <CTASection />
-        </div>
+        <CodeIntegrationsSection />
+        <PerformanceSection />
+        <SecuritySection />
+        <ComparisonSection />
+        <PricingSection />
+        <DocumentationSection />
+        <CTASection />
       </main>
     </>
   )

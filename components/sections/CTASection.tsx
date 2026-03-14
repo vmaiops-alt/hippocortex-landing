@@ -1,12 +1,21 @@
 'use client'
 
+import { useState } from 'react'
 import { Button } from '@/components/ui/Button'
 import { ScrollReveal } from '@/components/motion/ScrollReveal'
 
 export function CTASection() {
+  const [copied, setCopied] = useState(false)
+
+  const handleCopy = () => {
+    navigator.clipboard.writeText('npm install @hippocortex/sdk')
+    setCopied(true)
+    setTimeout(() => setCopied(false), 2000)
+  }
+
   return (
     <>
-      {/* Final Emotional Close */}
+      {/* Final CTA */}
       <section
         id="start"
         className="relative bg-bg-base overflow-hidden"
@@ -25,33 +34,51 @@ export function CTASection() {
 
         <div className="max-w-[1200px] mx-auto px-4 md:px-6 py-16 md:py-20 lg:py-32 relative z-10">
           <div className="text-center">
-            {/* Dramatic entrance: scale + fade */}
             <ScrollReveal duration={900} scale={0.97}>
               <h2
                 id="start-heading"
-                className="text-[40px] md:text-[56px] lg:text-[72px] font-bold text-text-primary leading-[1.05] tracking-[-0.03em]"
+                className="text-[36px] md:text-[48px] lg:text-[64px] font-bold text-text-primary leading-[1.05] tracking-[-0.03em]"
               >
-                Give Your Agents Memory
+                Install Hippocortex in seconds.
               </h2>
             </ScrollReveal>
 
             <ScrollReveal delay={200}>
               <p className="mt-6 text-[17px] max-md:text-base text-text-secondary max-w-[480px] mx-auto">
-                Free tier. No credit card. Start in 5 minutes.
+                Free tier. No credit card. Production-ready memory for your AI agents.
               </p>
             </ScrollReveal>
 
+            {/* Install command */}
+            <ScrollReveal delay={300}>
+              <div className="mt-10 max-w-[500px] mx-auto relative">
+                <button
+                  onClick={handleCopy}
+                  className="w-full text-left bg-bg-surface border border-border-subtle rounded-[10px] px-6 py-4 font-mono text-[16px] cursor-pointer hover:border-accent-cyan/40 transition-colors group animate-[cta-glow_4s_ease-in-out_infinite]"
+                  aria-label="Copy install command: npm install @hippocortex/sdk"
+                >
+                  <span className="text-accent-cyan">$ </span>
+                  <span className="text-text-primary">npm install @hippocortex/sdk</span>
+                  <span className="absolute right-5 top-1/2 -translate-y-1/2 text-text-muted group-hover:text-accent-cyan transition-colors">
+                    {copied ? '✓ Copied' : '⎘'}
+                  </span>
+                </button>
+              </div>
+            </ScrollReveal>
+
             <ScrollReveal delay={400}>
-              <div className="mt-10">
-                <Button href="#" variant="primary" size="large">
+              <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4">
+                <Button href="https://dashboard.hippocortex.dev" variant="primary" size="large">
                   Get Started — Free
+                </Button>
+                <Button href="https://docs.hippocortex.dev" variant="ghost" external>
+                  Read the Docs
                 </Button>
               </div>
             </ScrollReveal>
           </div>
         </div>
 
-        {/* Neural line divider */}
         <div className="neural-line" />
       </section>
 
@@ -59,16 +86,15 @@ export function CTASection() {
       <footer className="bg-bg-base border-t border-border-subtle/50">
         <div className="max-w-[1200px] mx-auto px-4 md:px-6 py-12 md:py-16">
           <ScrollReveal y={0} duration={400}>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+            <div className="grid grid-cols-2 md:grid-cols-5 gap-8">
               {/* Logo column */}
               <div className="col-span-2 md:col-span-1">
                 <span className="text-[15px] font-semibold text-text-primary">
                   Hippocortex
                 </span>
                 <p className="mt-3 text-sm text-text-muted">
-                  Persistent memory for AI agents.
+                  Memory infrastructure for AI agents.
                 </p>
-                {/* Social icons */}
                 <div className="mt-4 flex gap-4">
                   <a
                     href="https://github.com/hippocortex/hippocortex-os"
@@ -122,6 +148,30 @@ export function CTASection() {
                 </ul>
               </nav>
 
+              {/* Resources */}
+              <nav aria-label="Resources">
+                <h4 className="text-xs font-medium text-text-muted tracking-[0.08em] uppercase">
+                  Resources
+                </h4>
+                <ul className="mt-4 space-y-3">
+                  {[
+                    { label: 'Quickstart', href: 'https://docs.hippocortex.dev/quickstart' },
+                    { label: 'SDK Guide', href: 'https://docs.hippocortex.dev/sdk' },
+                    { label: 'Architecture', href: 'https://docs.hippocortex.dev/architecture' },
+                    { label: 'Blog', href: '/blog' },
+                  ].map((link) => (
+                    <li key={link.label}>
+                      <a
+                        href={link.href}
+                        className="text-sm text-text-tertiary hover:text-text-secondary transition-colors"
+                      >
+                        {link.label}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </nav>
+
               {/* Company */}
               <nav aria-label="Company links">
                 <h4 className="text-xs font-medium text-text-muted tracking-[0.08em] uppercase">
@@ -130,8 +180,8 @@ export function CTASection() {
                 <ul className="mt-4 space-y-3">
                   {[
                     { label: 'About', href: '/about' },
-                    { label: 'Blog', href: '/blog' },
                     { label: 'Contact', href: '/contact' },
+                    { label: 'Impressum', href: '/legal/impressum' },
                   ].map((link) => (
                     <li key={link.label}>
                       <a
@@ -152,8 +202,11 @@ export function CTASection() {
                 </h4>
                 <ul className="mt-4 space-y-3">
                   {[
-                    { label: 'Privacy', href: '/privacy' },
-                    { label: 'Terms', href: '/terms' },
+                    { label: 'Terms of Service', href: '/legal/terms' },
+                    { label: 'Privacy Policy', href: '/legal/privacy' },
+                    { label: 'Security Policy', href: '/legal/security' },
+                    { label: 'Acceptable Use', href: '/legal/acceptable-use' },
+                    { label: 'DPA', href: '/legal/dpa' },
                   ].map((link) => (
                     <li key={link.label}>
                       <a

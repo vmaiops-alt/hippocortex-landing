@@ -213,7 +213,7 @@ export function DeveloperSection() {
 
         {/* CTAs */}
         <ScrollReveal delay={300} className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
-          <Button href="#start" variant="primary">
+          <Button href="https://dashboard.hippocortex.dev" variant="primary">
             Get Started — Free
           </Button>
           <Button href="https://docs.hippocortex.dev/api" variant="text" external>

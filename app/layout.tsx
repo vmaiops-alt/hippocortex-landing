@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Inter, JetBrains_Mono } from "next/font/google";
+import { ClerkProvider } from "@clerk/nextjs";
 import "./globals.css";
 
 const inter = Inter({
@@ -34,10 +35,23 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${inter.variable} ${jetbrainsMono.variable}`}>
-      <body className="antialiased bg-bg-base text-text-secondary font-sans">
-        {children}
-      </body>
-    </html>
+    <ClerkProvider
+      appearance={{
+        variables: {
+          colorPrimary: "#00E5CC",
+          colorBackground: "#09090b",
+          colorText: "#e4e4ef",
+          colorInputBackground: "#12121a",
+          colorInputText: "#e4e4ef",
+          colorTextSecondary: "#8888a0",
+        },
+      }}
+    >
+      <html lang="en" className={`${inter.variable} ${jetbrainsMono.variable}`}>
+        <body className="antialiased bg-bg-base text-text-secondary font-sans">
+          {children}
+        </body>
+      </html>
+    </ClerkProvider>
   );
 }

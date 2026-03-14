@@ -25,6 +25,7 @@ const tiers: PricingTier[] = [
       '50K capture events/month',
       '1K synthesize calls/day',
       '5 agents',
+      '7-day event retention',
       'Community support',
     ],
     cta: 'Start Free',
@@ -34,12 +35,14 @@ const tiers: PricingTier[] = [
     name: 'Developer',
     price: '$49',
     period: '/mo',
-    description: 'For individual developers in production',
+    description: 'For individual developers shipping to production',
     badge: 'Most Popular',
     features: [
       '1M capture events/month',
-      'Unlimited synthesize',
+      'Unlimited synthesize calls',
       'Unlimited agents',
+      '90-day event retention',
+      'Predictive cache',
       'Priority support',
     ],
     cta: 'Start Free, Upgrade Later',
@@ -50,11 +53,13 @@ const tiers: PricingTier[] = [
     name: 'Pro',
     price: '$299',
     period: '/mo',
-    description: 'For production workloads at scale',
+    description: 'For teams running production workloads at scale',
     features: [
       '10M capture events/month',
-      'Unlimited synthesize',
+      'Unlimited synthesize calls',
       'Unlimited agents',
+      '1-year event retention',
+      'Cross-agent transfer',
       'Higher rate limits',
       'Priority support',
     ],
@@ -67,9 +72,12 @@ const tiers: PricingTier[] = [
     period: '',
     description: 'For scale, compliance, and custom deployment',
     features: [
-      'Custom limits',
+      'Custom event limits',
       'Dedicated infrastructure',
-      'Private deployment',
+      'Private deployment options',
+      'Unlimited retention',
+      'SSO / SAML',
+      'SLA guarantees',
       'Direct engineering support',
     ],
     cta: 'Contact Sales',
@@ -81,14 +89,17 @@ export function PricingSection() {
   return (
     <section
       id="pricing"
-      className="relative bg-bg-base"
+      className="relative bg-bg-raised"
       aria-labelledby="pricing-heading"
     >
       <div className="max-w-[1200px] mx-auto px-4 md:px-6 py-16 md:py-20 lg:py-24">
         <ScrollReveal className="text-center">
+          <span className="text-xs font-medium text-accent-cyan tracking-[0.12em] uppercase">
+            PRICING
+          </span>
           <h2
             id="pricing-heading"
-            className="text-[28px] md:text-[36px] lg:text-[44px] font-semibold text-text-primary"
+            className="mt-4 text-[28px] md:text-[36px] lg:text-[44px] font-semibold text-text-primary"
           >
             Start Free. Scale When Ready.
           </h2>
@@ -98,11 +109,10 @@ export function PricingSection() {
           </p>
         </ScrollReveal>
 
-        {/* Pricing cards — all appear simultaneously per spec */}
         <ScrollReveal delay={200}>
           <div className="mt-8 md:mt-10 lg:mt-12">
             {/* Desktop: 4 column grid */}
-            <div className="hidden lg:grid grid-cols-4 gap-6">
+            <div className="hidden lg:grid grid-cols-4 gap-5">
               {tiers.map((tier) => (
                 <PricingCard key={tier.name} tier={tier} />
               ))}
@@ -126,13 +136,11 @@ export function PricingSection() {
 
         <ScrollReveal delay={300}>
           <p className="mt-8 text-sm text-text-muted text-center">
-            Events = capture() calls. learn() and synthesize() included at every tier. No
-            hidden fees.
+            Events = capture() calls. learn(), compile(), and synthesize() included at every tier. No hidden fees.
           </p>
         </ScrollReveal>
       </div>
 
-      {/* Neural line divider */}
       <div className="neural-line" />
     </section>
   )
@@ -141,25 +149,24 @@ export function PricingSection() {
 function PricingCard({ tier }: { tier: PricingTier }) {
   return (
     <article
-      className={`relative flex flex-col rounded-2xl p-8 transition-all duration-300 hover:-translate-y-1 ${
+      className={`relative flex flex-col rounded-2xl p-7 transition-all duration-300 hover:-translate-y-1 ${
         tier.highlighted
-          ? 'bg-white/[0.03] backdrop-blur-sm border border-accent-cyan/30 shadow-[0_0_24px_rgba(0,229,204,0.06)] -translate-y-1'
-          : 'bg-white/[0.03] backdrop-blur-sm border border-white/[0.08]'
+          ? 'bg-white/[0.04] backdrop-blur-sm border border-accent-cyan/30 shadow-[0_0_24px_rgba(0,229,204,0.06)] -translate-y-1'
+          : 'bg-white/[0.02] backdrop-blur-sm border border-white/[0.08]'
       }`}
     >
       {tier.badge && (
-        <span className="absolute -top-3 left-8 px-3 py-1 text-xs font-medium text-bg-base bg-accent-cyan rounded-full uppercase tracking-wide">
+        <span className="absolute -top-3 left-7 px-3 py-1 text-xs font-medium text-bg-base bg-accent-cyan rounded-full uppercase tracking-wide">
           {tier.badge}
         </span>
       )}
 
-      <h3 className="text-[28px] font-semibold text-text-primary">{tier.name}</h3>
+      <h3 className="text-[24px] font-semibold text-text-primary">{tier.name}</h3>
 
       <div className="mt-4 flex items-baseline">
         <span
-          className="text-[36px] md:text-[40px] lg:text-[48px] font-mono font-medium text-text-primary leading-none"
+          className="text-[36px] md:text-[40px] lg:text-[44px] font-mono font-medium text-text-primary leading-none"
           style={{ fontFeatureSettings: '"tnum"' }}
-          aria-label={tier.period ? `${tier.price} per month` : tier.price}
         >
           {tier.price}
         </span>
@@ -168,7 +175,7 @@ function PricingCard({ tier }: { tier: PricingTier }) {
         )}
       </div>
 
-      <p className="mt-4 text-sm text-text-tertiary">{tier.description}</p>
+      <p className="mt-3 text-sm text-text-tertiary">{tier.description}</p>
 
       <ul className="mt-6 flex-1 space-y-3">
         {tier.features.map((feature) => (
@@ -191,7 +198,7 @@ function PricingCard({ tier }: { tier: PricingTier }) {
       </ul>
 
       <div className="mt-8">
-        <Button href="#start" variant={tier.ctaVariant} className="w-full justify-center">
+        <Button href="https://dashboard.hippocortex.dev" variant={tier.ctaVariant} className="w-full justify-center">
           {tier.cta}
         </Button>
       </div>

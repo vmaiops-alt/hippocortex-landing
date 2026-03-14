@@ -1,11 +1,13 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { useAuth, SignInButton, SignUpButton, UserButton } from '@clerk/nextjs'
 import { Button } from './Button'
 
 export function Nav() {
   const [visible, setVisible] = useState(false)
   const [scrollProgress, setScrollProgress] = useState(0)
+  const { isSignedIn, isLoaded } = useAuth()
 
   useEffect(() => {
     const handleScroll = () => {
@@ -13,10 +15,8 @@ export function Nav() {
       const viewportHeight = window.innerHeight
       const docHeight = document.documentElement.scrollHeight - viewportHeight
 
-      // Show nav after scrolling past hero
       setVisible(scrollY > viewportHeight * 0.8)
 
-      // Update scroll progress
       if (docHeight > 0) {
         setScrollProgress(Math.min(scrollY / docHeight, 1))
       }
@@ -51,27 +51,69 @@ export function Nav() {
             Hippocortex
           </a>
 
-          {/* Right side */}
-          <div className="flex items-center gap-6">
+          {/* Center nav links */}
+          <div className="hidden lg:flex items-center gap-6">
+            <a href="#capabilities" className="text-sm text-text-tertiary hover:text-text-primary transition-colors">
+              Capabilities
+            </a>
+            <a href="#architecture" className="text-sm text-text-tertiary hover:text-text-primary transition-colors">
+              Architecture
+            </a>
+            <a href="#integrations" className="text-sm text-text-tertiary hover:text-text-primary transition-colors">
+              Integrations
+            </a>
+            <a href="#pricing" className="text-sm text-text-tertiary hover:text-text-primary transition-colors">
+              Pricing
+            </a>
             <a
               href="https://docs.hippocortex.dev"
               target="_blank"
               rel="noopener noreferrer"
-              className="hidden md:inline text-sm font-medium text-text-tertiary hover:text-text-primary transition-colors"
+              className="text-sm text-text-tertiary hover:text-text-primary transition-colors"
             >
               Docs
             </a>
+          </div>
+
+          {/* Right side */}
+          <div className="flex items-center gap-4">
             <a
               href="https://github.com/hippocortex/hippocortex-os"
               target="_blank"
               rel="noopener noreferrer"
-              className="hidden lg:inline text-sm font-medium text-text-tertiary hover:text-text-primary transition-colors"
+              className="hidden md:inline text-sm font-medium text-text-tertiary hover:text-text-primary transition-colors"
             >
               GitHub
             </a>
-            <Button href="#start" variant="primary" className="text-sm !px-5 !py-2">
-              Get Started →
-            </Button>
+
+            {isLoaded && !isSignedIn && (
+              <>
+                <SignInButton mode="modal">
+                  <button className="hidden md:inline text-sm font-medium text-text-tertiary hover:text-text-primary transition-colors cursor-pointer">
+                    Sign In
+                  </button>
+                </SignInButton>
+                <SignUpButton mode="modal">
+                  <Button variant="primary" className="text-sm !px-5 !py-2">
+                    Get Started →
+                  </Button>
+                </SignUpButton>
+              </>
+            )}
+            {isLoaded && isSignedIn && (
+              <>
+                <Button href="https://dashboard.hippocortex.dev" variant="primary" className="text-sm !px-5 !py-2">
+                  Dashboard →
+                </Button>
+                <UserButton
+                  appearance={{
+                    elements: {
+                      avatarBox: 'w-8 h-8',
+                    },
+                  }}
+                />
+              </>
+            )}
           </div>
         </div>
       </div>

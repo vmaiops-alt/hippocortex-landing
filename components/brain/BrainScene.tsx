@@ -4,7 +4,6 @@ import { Suspense, useEffect, useState } from 'react'
 import { Canvas } from '@react-three/fiber'
 import { EffectComposer, Bloom } from '@react-three/postprocessing'
 import { BrainShell } from './BrainShell'
-import { SynapseNodes } from './SynapseNodes'
 import { SignalPathways } from './SignalPathways'
 
 function BrainContent() {
@@ -22,9 +21,8 @@ function BrainContent() {
       <pointLight position={[0, -2, 2]} intensity={0.1} color="#8B5CF6" />
 
       {/* Brain layers — slight 3/4 angle for better topology readability */}
-      <group position={[0, 0, 0]} scale={1.3} rotation={[0.10, -0.30, 0]}>
+      <group position={[0, 0, 0]} scale={0.65} rotation={[0.10, -0.30, 0]}>
         <BrainShell />
-        <SynapseNodes />
         <SignalPathways />
       </group>
 
