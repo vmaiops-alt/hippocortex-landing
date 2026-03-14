@@ -80,7 +80,7 @@ function Card({
     cardX = rightX + CARD_WIDTH <= containerSize.width - 8 ? rightX : leftX
   }
 
-  const cardHeight = datum.codeSnippet ? 220 : 160
+  const cardHeight = 140
   let cardY = screen.y - cardHeight / 2
   cardY = Math.max(8, Math.min(containerSize.height - cardHeight - 8, cardY))
 
@@ -166,15 +166,6 @@ function Card({
               background: 'linear-gradient(90deg, transparent, rgba(255,215,0,0.15), transparent)',
             }}
           />
-
-          {/* Code snippet */}
-          {datum.codeSnippet && (
-            <div className="mb-2 rounded bg-bg-void/80 px-2.5 py-2 overflow-x-auto">
-              <pre className="text-[10px] font-mono leading-[1.5] text-accent-cyan whitespace-pre">
-                {datum.codeSnippet}
-              </pre>
-            </div>
-          )}
 
           {/* Bullets */}
           <ul className="space-y-1">

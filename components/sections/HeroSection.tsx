@@ -50,7 +50,7 @@ export function HeroSection() {
     <section
       id="hero"
       ref={sectionRef}
-      className="relative min-h-screen flex items-center overflow-hidden"
+      className="relative min-h-[85vh] flex items-center overflow-hidden"
       aria-labelledby="hero-heading"
     >
       {/* Background glow */}
@@ -226,9 +226,54 @@ export function HeroSection() {
         </div>
       </div>
 
-      {/* Neural line divider */}
-      <div className="absolute bottom-0 left-0 right-0">
-        <div className="neural-line" />
+      {/* Trust bar */}
+      <div className="absolute bottom-0 left-0 right-0 z-20">
+        <div
+          className="border-t border-b"
+          style={{
+            borderColor: 'rgba(255,255,255,0.06)',
+            background: 'rgba(9,9,11,0.7)',
+            backdropFilter: 'blur(8px)',
+            WebkitBackdropFilter: 'blur(8px)',
+          }}
+        >
+          <div className="max-w-[1200px] mx-auto px-4 md:px-6">
+            <div
+              className="flex items-center justify-between py-4 gap-6 overflow-x-auto"
+              style={{
+                opacity: loaded ? 1 : 0,
+                transition: 'opacity 800ms ease 600ms',
+              }}
+            >
+              {[
+                { value: '403', unit: 'events/sec', label: 'Ingestion throughput' },
+                { value: '18ms', unit: 'p50', label: 'Context synthesis' },
+                { value: '100,000x', unit: '', label: 'Memory compression' },
+                { value: '0', unit: 'LLM calls', label: 'Fully deterministic' },
+              ].map((stat, i) => (
+                <div key={i} className="flex items-center gap-3 shrink-0">
+                  <div className="text-right">
+                    <span className="text-[20px] md:text-[24px] font-bold text-text-primary leading-none">
+                      {stat.value}
+                    </span>
+                    {stat.unit && (
+                      <span className="text-[12px] text-text-muted ml-1 font-mono">{stat.unit}</span>
+                    )}
+                  </div>
+                  <div className="text-[11px] text-text-tertiary leading-tight max-w-[100px]">
+                    {stat.label}
+                  </div>
+                  {i < 3 && (
+                    <div
+                      className="w-px h-8 ml-4 hidden sm:block"
+                      style={{ background: 'rgba(255,255,255,0.08)' }}
+                    />
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
       </div>
     </section>
   )
