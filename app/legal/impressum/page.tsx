@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
   title: 'Impressum - Hippocortex',
-  description: 'Impressum (Legal Notice) for Hippocortex, as required by German law.',
+  description: 'Legal notice and company information for Hippocortex.',
 }
 
 export default function ImpressumPage() {
@@ -10,24 +10,53 @@ export default function ImpressumPage() {
     <div className="space-y-8">
       <div>
         <h1 className="text-[32px] md:text-[40px] font-bold text-text-primary mb-2">Impressum</h1>
-        <p className="text-sm text-text-muted">Angaben gemäß § 5 TMG / Information pursuant to § 5 TMG</p>
+        <p className="text-sm text-text-muted">Legal Notice</p>
       </div>
 
       <section className="space-y-4">
-        <h2 className="text-xl font-semibold text-text-primary">Anbieter / Provider</h2>
+        <h2 className="text-xl font-semibold text-text-primary">Company Information</h2>
         <div className="text-text-secondary leading-relaxed space-y-1">
-          <p>Hippocortex</p>
-          <p>Berlin, Germany</p>
+          <p className="font-medium text-text-primary">OPENGATE TECHNOLOGY LTD.</p>
+          <p>15 Jamieson House, 4 Edgar Road</p>
+          <p>Whitton, Hounslow</p>
+          <p>England, TW4 5QQ</p>
+          <p>United Kingdom</p>
         </div>
       </section>
 
       <section className="space-y-4">
-        <h2 className="text-xl font-semibold text-text-primary">Kontakt / Contact</h2>
+        <h2 className="text-xl font-semibold text-text-primary">Registration Details</h2>
+        <div className="bg-bg-surface border border-border-subtle rounded-lg p-5 space-y-3">
+          <div>
+            <span className="text-sm font-medium text-text-primary">Company Number:</span>
+            <span className="text-sm text-text-secondary ml-2">16645990</span>
+          </div>
+          <div>
+            <span className="text-sm font-medium text-text-primary">Company Type:</span>
+            <span className="text-sm text-text-secondary ml-2">Private Limited Company</span>
+          </div>
+          <div>
+            <span className="text-sm font-medium text-text-primary">Incorporated:</span>
+            <span className="text-sm text-text-secondary ml-2">12 August 2025</span>
+          </div>
+          <div>
+            <span className="text-sm font-medium text-text-primary">Jurisdiction:</span>
+            <span className="text-sm text-text-secondary ml-2">England and Wales</span>
+          </div>
+          <div>
+            <span className="text-sm font-medium text-text-primary">Registered Office:</span>
+            <span className="text-sm text-text-secondary ml-2">15 Jamieson House, 4 Edgar Road, Whitton, Hounslow, England, TW4 5QQ</span>
+          </div>
+        </div>
+      </section>
+
+      <section className="space-y-4">
+        <h2 className="text-xl font-semibold text-text-primary">Contact</h2>
         <div className="text-text-secondary leading-relaxed space-y-1">
           <p>
-            E-Mail:{' '}
-            <a href="mailto:contact@hippocortex.dev" className="text-accent-cyan hover:text-accent-cyan-bright transition-colors">
-              contact@hippocortex.dev
+            Email:{' '}
+            <a href="mailto:support@hippocortex.dev" className="text-accent-cyan hover:text-accent-cyan-bright transition-colors">
+              support@hippocortex.dev
             </a>
           </p>
           <p>
@@ -40,75 +69,67 @@ export default function ImpressumPage() {
       </section>
 
       <section className="space-y-4">
-        <h2 className="text-xl font-semibold text-text-primary">
-          Verantwortlich für den Inhalt nach § 55 Abs. 2 RStV
-        </h2>
+        <h2 className="text-xl font-semibold text-text-primary">Responsible for Content</h2>
         <p className="text-text-secondary leading-relaxed">
-          Hippocortex<br />
-          Berlin, Germany
+          OPENGATE TECHNOLOGY LTD.<br />
+          15 Jamieson House, 4 Edgar Road<br />
+          Whitton, Hounslow, England, TW4 5QQ
         </p>
       </section>
 
       <section className="space-y-4">
-        <h2 className="text-xl font-semibold text-text-primary">Haftungsausschluss / Disclaimer</h2>
+        <h2 className="text-xl font-semibold text-text-primary">Disclaimer</h2>
 
-        <h3 className="text-lg font-medium text-text-primary">Haftung für Inhalte</h3>
+        <h3 className="text-lg font-medium text-text-primary">Liability for Content</h3>
         <p className="text-text-secondary leading-relaxed">
-          Die Inhalte unserer Seiten wurden mit größter Sorgfalt erstellt. Für die Richtigkeit,
-          Vollständigkeit und Aktualität der Inhalte können wir jedoch keine Gewähr übernehmen.
-          Als Diensteanbieter sind wir gemäß § 7 Abs.1 TMG für eigene Inhalte auf diesen Seiten
-          nach den allgemeinen Gesetzen verantwortlich. Nach §§ 8 bis 10 TMG sind wir als
-          Diensteanbieter jedoch nicht verpflichtet, übermittelte oder gespeicherte fremde
-          Informationen zu überwachen oder nach Umständen zu forschen, die auf eine rechtswidrige
-          Tätigkeit hinweisen.
+          The contents of our pages have been created with the utmost care. However, we cannot
+          guarantee the accuracy, completeness, or timeliness of the content. As a service provider,
+          we are responsible for our own content on these pages under general law. We are not obligated
+          to monitor transmitted or stored third-party information, nor to investigate circumstances
+          that indicate illegal activity.
         </p>
 
-        <h3 className="text-lg font-medium text-text-primary">Haftung für Links</h3>
+        <h3 className="text-lg font-medium text-text-primary">Liability for Links</h3>
         <p className="text-text-secondary leading-relaxed">
-          Unser Angebot enthält Links zu externen Webseiten Dritter, auf deren Inhalte wir keinen
-          Einfluss haben. Deshalb können wir für diese fremden Inhalte auch keine Gewähr übernehmen.
-          Für die Inhalte der verlinkten Seiten ist stets der jeweilige Anbieter oder Betreiber der
-          Seiten verantwortlich. Die verlinkten Seiten wurden zum Zeitpunkt der Verlinkung auf
-          mögliche Rechtsverstöße überprüft. Rechtswidrige Inhalte waren zum Zeitpunkt der
-          Verlinkung nicht erkennbar.
+          Our website contains links to external third-party websites over whose content we have no
+          control. We therefore cannot accept any liability for this external content. The respective
+          provider or operator of the linked pages is always responsible for the content of those pages.
+          The linked pages were checked for possible legal violations at the time of linking. Illegal
+          content was not apparent at the time of linking.
         </p>
 
-        <h3 className="text-lg font-medium text-text-primary">Urheberrecht</h3>
+        <h3 className="text-lg font-medium text-text-primary">Copyright</h3>
         <p className="text-text-secondary leading-relaxed">
-          Die durch die Seitenbetreiber erstellten Inhalte und Werke auf diesen Seiten unterliegen
-          dem deutschen Urheberrecht. Die Vervielfältigung, Bearbeitung, Verbreitung und jede Art
-          der Verwertung außerhalb der Grenzen des Urheberrechtes bedürfen der schriftlichen
-          Zustimmung des jeweiligen Autors bzw. Erstellers. Downloads und Kopien dieser Seite sind
-          nur für den privaten, nicht kommerziellen Gebrauch gestattet.
+          The content and works on these pages created by the site operators are subject to copyright
+          law. Reproduction, editing, distribution, and any kind of use beyond the limits of copyright
+          law require the written consent of the respective author or creator. Downloads and copies of
+          this site are only permitted for private, non-commercial use.
         </p>
       </section>
 
       <section className="space-y-4">
-        <h2 className="text-xl font-semibold text-text-primary">Datenschutz / Data Protection</h2>
+        <h2 className="text-xl font-semibold text-text-primary">Data Protection</h2>
         <p className="text-text-secondary leading-relaxed">
-          Informationen zum Datenschutz finden Sie in unserer{' '}
+          Information about data protection can be found in our{' '}
           <a href="/legal/privacy" className="text-accent-cyan hover:text-accent-cyan-bright transition-colors">
-            Datenschutzerklärung (Privacy Policy)
+            Privacy Policy
           </a>.
         </p>
       </section>
 
       <section className="space-y-4">
-        <h2 className="text-xl font-semibold text-text-primary">
-          Streitschlichtung / Dispute Resolution
-        </h2>
+        <h2 className="text-xl font-semibold text-text-primary">Dispute Resolution</h2>
         <p className="text-text-secondary leading-relaxed">
-          Die Europäische Kommission stellt eine Plattform zur Online-Streitbeilegung (OS) bereit:{' '}
-          <a
-            href="https://ec.europa.eu/consumers/odr"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-accent-cyan hover:text-accent-cyan-bright transition-colors"
-          >
-            https://ec.europa.eu/consumers/odr
-          </a>.
-          Wir sind nicht bereit oder verpflichtet, an Streitbeilegungsverfahren vor einer
-          Verbraucherschlichtungsstelle teilzunehmen.
+          We are neither willing nor obliged to participate in dispute resolution proceedings
+          before a consumer arbitration board.
+        </p>
+      </section>
+
+      <section className="space-y-4">
+        <h2 className="text-xl font-semibold text-text-primary">Governing Law</h2>
+        <p className="text-text-secondary leading-relaxed">
+          This legal notice and any disputes arising from it are governed by the laws of England and Wales.
+          OPENGATE TECHNOLOGY LTD. is registered with Companies House under company number 16645990.
         </p>
       </section>
     </div>
